@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ElementQML/SelecteurOnglet.qml</file>
+        <file>ControleRoboclaw/MainPageRoboclaw.qml</file>
+        <file>ControleRoboclaw/Graph.qml</file>
+        <file>ControleRoboclaw/BandeauHaut.qml</file>
+        <file>ControleRoboclaw/PanneauControleVitesse.qml</file>
+        <file>EditionStrategie/MainPageEditionStrat.qml</file>
+        <file>EditionStrategie/Etape.qml</file>
+    </qresource>
+</RCC>
