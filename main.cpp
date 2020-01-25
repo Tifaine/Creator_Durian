@@ -32,6 +32,8 @@
 #include <QtCore/QDir>
 #include <QtQml/QQmlEngine>
 #include "ControleRoboclaw/gestionroboclaw.h"
+#include "EditionStrategie/etape.h"
+#include "EditionStrategie/gestionetape.h"
 #include <QQmlContext>
 
 int main(int argc, char *argv[])
@@ -39,6 +41,7 @@ int main(int argc, char *argv[])
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
     GestionRoboclaw roboclaw;
+    GestionEtape gestEtape;
     QQuickView viewer;
 
     // The following are needed to make examples run without having to install the module
@@ -50,8 +53,11 @@ int main(int argc, char *argv[])
                                                        QString::fromLatin1("qml")));
     QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
 
+    qmlRegisterType<Etape>("etape", 1, 0, "Etape");
+
     viewer.setTitle(QStringLiteral("Creator Durian"));
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);
+    viewer.engine()->rootContext()->setContextProperty("gestEtape", &gestEtape);
     viewer.engine()->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     viewer.setSource(QUrl("qrc:/main.qml"));
     viewer.setResizeMode(QQuickView::SizeRootObjectToView);

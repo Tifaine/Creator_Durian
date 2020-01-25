@@ -6,6 +6,8 @@ Item {
     width: 1500
     height: 800
 
+
+
     Image {
         id: name
         anchors.leftMargin: 50
@@ -16,7 +18,6 @@ Item {
 
         source: "file:///" + applicationDirPath + "/data/table.png"
 
-
         MouseArea
         {
             anchors.fill: parent
@@ -26,20 +27,39 @@ Item {
             {
                 textX.text = "X : "+ Math.round( (mouseX * 3000 / 900) - 1500 )
             }
+
             onMouseYChanged:
             {
                 textY.text = "Y : "+Math.round( mouseY * 2000 / 600)
             }
+
             onPressAndHold:
             {
                 console.log("hold")
             }
         }
 
-        Etape
+        ListModel
         {
-            x: 100
-            y: 100
+            id:listEtape
+            ListElement{ _x:100 ; _y:100; _title:"Init"; _indice:0; _type:0 }
+        }
+
+        Repeater
+        {
+            id:repeaterEtape
+            model:listEtape
+
+            Etape
+            {
+                x: _x
+                y: _y
+                stepName: _title
+                onEtapeSelected:
+                {
+                    pannel.affiche(etape)
+                }
+            }
         }
     }
 
@@ -66,10 +86,28 @@ Item {
         anchors.topMargin: 25
         font.pixelSize: 15
     }
-}
 
-/*##^##
-Designer {
-    D{i:3;anchors_x:30;anchors_y:25}D{i:4;anchors_x:111;anchors_y:28}
+    Button {
+        id: buttonAddEtape
+        text: qsTr("Ajouter étape")
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        anchors.left: parent.left
+        anchors.leftMargin: 296
+        onClicked:
+        {
+            listEtape.append({_x:100,_y:100, _title:"Etape",_indice:listEtape.count,_type:1})            
+        }
+    }
+
+    PanneauEditionStrategie
+    {
+        id:pannel
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: name.right
+        anchors.leftMargin: 0
+        anchors.top: name.top
+        anchors.topMargin: 0
+    }
 }
-##^##*/

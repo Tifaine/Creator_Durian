@@ -15,6 +15,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         ControleRoboclaw/gestionroboclaw.cpp \
+        EditionStrategie/etape.cpp \
+        EditionStrategie/gestionetape.cpp \
         clientmqtt.cpp \
         main.cpp \
         threadmqtt.cpp
@@ -26,7 +28,7 @@ QML_IMPORT_PATH =
 
 INCLUDEPATH = /usr/include/mosquitto
 
-LIBS += -lmosquittopp
+#LIBS += -lmosquittopp
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
@@ -38,6 +40,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     ControleRoboclaw/gestionroboclaw.h \
+    EditionStrategie/etape.h \
+    EditionStrategie/gestionetape.h \
     clientmqtt.h \
     threadmqtt.h
 

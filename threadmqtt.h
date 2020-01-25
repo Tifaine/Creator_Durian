@@ -31,7 +31,7 @@ private slots:
 
 private:
     QTimer *timer;
-    clientMQTT *cli;
+    //clientMQTT *cli;
     const char *mId;
     const char *mHost;
     int mPort;

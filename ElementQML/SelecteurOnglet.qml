@@ -21,11 +21,12 @@ Item {
         ListModel
         {
             id:listModel            
-            ListElement{ _nom:"Edition Stratégie" ; index : 0 }
-            ListElement{ _nom:"Edition Sequence" ; index : 1 }
-            ListElement{ _nom:"Edition Action" ; index : 2 }
-            ListElement{ _nom:"Réglages Roboclaw" ; index : 3 }
-            ListElement{ _nom:"Réglages Dynamixel" ; index : 4 }
+            ListElement{ _nom:"Définir Stratégie" ;     index : 0 }
+            ListElement{ _nom:"Édition étape" ;         index : 1 }
+            ListElement{ _nom:"Édition Sequence" ;      index : 2 }
+            ListElement{ _nom:"Édition Action" ;        index : 3 }
+            ListElement{ _nom:"Réglages Roboclaw" ;     index : 4 }
+            ListElement{ _nom:"Réglages Dynamixel" ;    index : 5 }
         }
 
         Repeater

@@ -1,6 +1,6 @@
 #include "clientmqtt.h"
 #include <QDebug>
-
+/*
 clientMQTT::clientMQTT(const char *id, const char *host, int port) : mosquittopp(id)
 {
 
@@ -8,7 +8,7 @@ clientMQTT::clientMQTT(const char *id, const char *host, int port) : mosquittopp
     mosqpp::lib_init();
     /* Connect immediately. This could also be done by calling
          * mqtt_tempconv->connect(). */
-    mosquittopp::connect(host, port, keepalive);
+/*    mosquittopp::connect(host, port, keepalive);
 }
 
 void clientMQTT::start()
@@ -22,7 +22,7 @@ void clientMQTT::on_connect(int rc)
     qDebug()<<"Connected with code "<< rc;
     if(rc == 0){
         /* Only attempt to subscribe on a successful connect. */
-        emit isConnected();
+/*        emit isConnected();
     }
 }
 
@@ -47,3 +47,4 @@ void clientMQTT::subscribeTo(QString topic)
 
     this->subscribe(nullptr, topic.toStdString().c_str(), 1);
 }
+*/

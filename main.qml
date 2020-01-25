@@ -65,22 +65,32 @@ Item {
                 case 0:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=true
+                    editeurEtape.visible=false
                     break;
                 case 1:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
+                    editeurEtape.visible=true
                     break;
                 case 2:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
+                    editeurEtape.visible=false
                     break;
                 case 3:
-                    mainPageRoboclaw.visible=true
-                    mainPageEditionStrat.visible=false
-                    break;
-                case 4:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
+                    editeurEtape.visible=false
+                    break;
+                case 4:
+                    mainPageRoboclaw.visible=true
+                    mainPageEditionStrat.visible=false
+                    editeurEtape.visible=false
+                    break;
+                case 5:
+                    mainPageRoboclaw.visible=false
+                    mainPageEditionStrat.visible=false
+                    editeurEtape.visible=false
                     break;
                 }
             }
@@ -99,9 +109,21 @@ Item {
 
         MainPageEditionStrat {
             id: mainPageEditionStrat
+            anchors.right: rectangle.right
+            anchors.rightMargin: 0
             visible: true
             anchors.left: choixOngletSide.right
-            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
+            anchors.leftMargin: 0
+        }
+
+        EditeurEtape {
+            id: editeurEtape
+            anchors.right: rectangle.right
+            anchors.rightMargin: 0
+            visible: false
+            anchors.left: choixOngletSide.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
             anchors.leftMargin: 0

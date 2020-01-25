@@ -3,7 +3,7 @@ import QtQuick.Controls 2.13
 
 Item {
     id: element
-    width: 795
+    width: 550
     height: 650
     property bool isInit: false
 

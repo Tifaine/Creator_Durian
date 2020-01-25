@@ -1,6 +1,6 @@
 #ifndef CLIENTMQTT_H
 #define CLIENTMQTT_H
-
+/*
 #include <mosquittopp.h>
 #include <QObject>
 
@@ -23,6 +23,6 @@ signals:
     void isConnected();
     void onMessage(QString topic, QString payload);
 
-};
+};*/
 
 #endif // CLIENTMQTT_H
