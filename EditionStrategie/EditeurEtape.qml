@@ -1,11 +1,16 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
+import etape 1.0
+import itemTaux 1.0
 
 Item {
     id: element
     width: 1500
     height: 800
+
+    property int etapeEnCours: -1
+
 
     ListModel
     {
@@ -13,6 +18,20 @@ Item {
         ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"}
         ListElement{ _nom:"test" ; index : 1; _color:"#00ffffff"}
         ListElement{ _nom:"aaa" ; index : 2; _color:"#00ffffff"}
+    }
+
+    Component.onCompleted:
+    {
+        updateEtape()
+    }
+
+    function updateEtape()
+    {
+        listComportement.clear();
+        for(var i = 0; i < gestEtape.getNbEtape(); i++)
+        {
+            listComportement.append({"_nom" : gestEtape.getEtape(i).nomEtape, "index" : listComportement.count, "_color" : "#00ffffff"})
+        }
     }
 
     Flickable
@@ -47,7 +66,7 @@ Item {
             {
 
                 listComportement.setProperty(indice,"_color","#300000");
-                if(behaviorSelected !== -1)
+                if(behaviorSelected !== -1 && behaviorSelected !== indice)
                 {
                     listComportement.setProperty(behaviorSelected,"_color","#00ffffff");
                 }
@@ -98,37 +117,32 @@ Item {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         }
 
-
+                        /* Etape
+                        {
+                            id:etape
+                            nomEtape: nomComportement.text
+                            Component.onCompleted: gestEtape.addEtape(etape)
+                        }*/
 
                         MouseArea
                         {
                             anchors.fill: parent
                             z:1
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            property var step: 0
                             onClicked:
                             {
+                                step = gestEtape.getEtape(index)
                                 rectangle5.updateColor(index)
-                                textFieldNomEtape.text = gestTypeAction.getNomAction(index)
-                                radioButtonBlocant.checked = gestTypeAction.getIsBlocant(index)
-                                listParam.clear();
-                                listParam1.clear();
-                                listAlias.clear();
-                                rectangle6.behaviorSelected=-1
-                                gestAction.clearParam()
-                                for(var i =0; i<gestTypeAction.getNbParam(index);i++)
-                                {
-                                    listParam.append({_nom:gestTypeAction.getNameParam(index,i),value:gestTypeAction.getValueParam(index,i), index:listParam.count})
-                                    listParam1.append({_nom:gestTypeAction.getNameParam(index,i),_color:"#00ffffff", index:listParam1.count})
-
-                                    gestAction.setNouveauParam(gestTypeAction.getNameParam(index,i),gestTypeAction.getValueParam(index,i))
-
-                                    for(var j=0;j<gestTypeAction.getNbAlias(index,gestTypeAction.getNameParam(index,i));j++)
-                                    {
-                                        gestAction.ajoutNouveauAlias(gestTypeAction.getNameParam(index,i),gestTypeAction.getNomAlias(index,gestTypeAction.getNameParam(index,i),j),gestTypeAction.getValueAlias(index,gestTypeAction.getNameParam(index,i),j))
-                                    }
-                                }
-                                gestAction.setNomAction(gestTypeAction.getNomAction(index))
-                                gestAction.setIsActionBlocante(gestTypeAction.getIsBlocant(index))
+                                etapeEnCours = -1
+                                textFieldNomEtape.text = step.nomEtape
+                                textFieldNbPoints.text = step.nbPoints
+                                textFieldTpsMoyen.text = step.tempsMoyen
+                                textFieldTpsMax.text = step.tempsMax
+                                textFieldDateMax.text = step.dateMax
+                                textFieldDeadline.text = step.deadline
+                                etapeEnCours = index
+                                updateTaux()
                             }
                         }
                     }
@@ -159,6 +173,7 @@ Item {
         anchors.top: rectangle1.bottom
         anchors.topMargin: 25
         font.pixelSize: 13
+
     }
 
     TextField {
@@ -168,6 +183,13 @@ Item {
         anchors.leftMargin: 15
         anchors.top: rectangle1.bottom
         anchors.topMargin: 13
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).nomEtape = text
+            }
+        }
     }
 
     Text {
@@ -180,6 +202,7 @@ Item {
         anchors.topMargin: 25
         font.bold: true
         font.pixelSize: 13
+
     }
 
     TextField {
@@ -191,6 +214,14 @@ Item {
         anchors.topMargin: 13
         anchors.top: rectangle1.bottom
         anchors.left: textNbPoint.right
+        validator: IntValidator{bottom : 0; top : 999999}
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).nbPoints = parseInt(text)
+            }
+        }
     }
 
     Button {
@@ -215,6 +246,18 @@ Item {
         anchors.top: rectangle1.bottom
         anchors.topMargin: 25
         font.pixelSize: 13
+
+
+        MouseArea
+        {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                ToolTip.text=("Temps moyen mis pas le robot pour réaliser l'étape")
+                ToolTip.visible=true
+            }
+            onExited: ToolTip.visible=false
+        }
     }
 
     TextField {
@@ -226,6 +269,14 @@ Item {
         anchors.leftMargin: 30
         anchors.top: rectangle1.bottom
         anchors.left: textTempsMoyen.right
+        validator: IntValidator{bottom : 0; top : 100}
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).tempsMoyen = parseInt(text)
+            }
+        }
     }
 
     Text {
@@ -240,6 +291,16 @@ Item {
         anchors.top: textTempsMoyen.bottom
         font.pixelSize: 13
         anchors.left: textFieldNbPoints.right
+        MouseArea
+        {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                ToolTip.text=("Temps maximum autorisé au robot pour réaliser l'étape")
+                ToolTip.visible=true
+            }
+            onExited: ToolTip.visible=false
+        }
     }
 
     TextField {
@@ -251,6 +312,14 @@ Item {
         anchors.topMargin: 20
         anchors.top: textFieldTpsMoyen.bottom
         anchors.left: textTempsMax.right
+        validator: IntValidator{bottom : 0; top : 100}
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).tempsMax = parseInt(text)
+            }
+        }
     }
 
     Text {
@@ -265,6 +334,16 @@ Item {
         anchors.top: textTempsMax.bottom
         font.pixelSize: 13
         anchors.left: textFieldNbPoints.right
+        MouseArea
+        {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                ToolTip.text=("Date maximale de début de l'action avant qu'elle ne soit désactivée")
+                ToolTip.visible=true
+            }
+            onExited: ToolTip.visible=false
+        }
     }
 
     TextField {
@@ -276,6 +355,14 @@ Item {
         anchors.topMargin: 20
         anchors.top: textFieldTpsMax.bottom
         anchors.left: textDateMax.right
+        validator: IntValidator{bottom : 0; top : 100}
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).dateMax = parseInt(text)
+            }
+        }
     }
 
     Text {
@@ -290,6 +377,16 @@ Item {
         anchors.top: textDateMax.bottom
         font.pixelSize: 13
         anchors.left: textFieldNbPoints.right
+        MouseArea
+        {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                ToolTip.text=("Date maximale de fin de l'action avant qu'elle ne soit désactivée")
+                ToolTip.visible=true
+            }
+            onExited: ToolTip.visible=false
+        }
     }
 
     TextField {
@@ -301,6 +398,14 @@ Item {
         anchors.leftMargin: 142
         anchors.top: textFieldDateMax.bottom
         anchors.left: textDeadLine.right
+        validator: IntValidator{bottom : 0; top : 100}
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).deadline = parseInt(text)
+            }
+        }
     }
 
     Button {
@@ -314,6 +419,15 @@ Item {
         anchors.leftMargin: 275
         anchors.top: textFieldNomEtape.bottom
         anchors.topMargin: 65
+        onClicked:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).save()
+                gestEtape.updateEtape()
+                updateEtape()
+            }
+        }
     }
 
     ListModel
@@ -351,6 +465,8 @@ Item {
             id:rectangleTaux
             anchors.fill: parent
             color:"transparent"
+            Component.onCompleted: listTaux.clear()
+            property var taux : etapeEnCours!==-1?gestEtape.getEtape(etapeEnCours):0
 
             property int behaviorSelected:-1
             Repeater
@@ -362,7 +478,6 @@ Item {
                 {
                     id:rectTaux
                     height:50
-                    //width:rectangle
                     color:"transparent"
                     radius: 10
                     anchors.left: repeaterTaux.left
@@ -371,7 +486,6 @@ Item {
                     anchors.rightMargin: 10
                     anchors.top: repeaterTaux.top
                     anchors.topMargin:((51*index))
-
 
                     ComboBox {
                         id: controlParam
@@ -383,6 +497,14 @@ Item {
                         anchors.leftMargin: 10
                         model: ["Temps", "Gobelet"]
                         currentIndex: param
+                        onCurrentIndexChanged:
+                        {
+                            if(etapeEnCours !== -1)
+                            {
+                                rectangleTaux.taux.setParamTaux(index, currentIndex)
+                            }
+                        }
+
                         delegate: ItemDelegate {
                             width: controlParam.width
                             contentItem: Text {
@@ -502,6 +624,14 @@ Item {
                         anchors.left: rectangleParamCond.left
                         anchors.leftMargin: 5
                         currentIndex: condition
+                        onCurrentIndexChanged:
+                        {
+                            if (etapeEnCours !== -1)
+                            {
+                                rectangleTaux.taux.setCondTaux(index, currentIndex)
+                            }
+                        }
+
                         model: [">", "=", "<"]
 
                         delegate: ItemDelegate {
@@ -610,6 +740,14 @@ Item {
                         anchors.topMargin: 5
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 5
+                        validator: IntValidator{bottom : 0; top : 100}
+                        onTextChanged:
+                        {
+                            if(etapeEnCours !== -1)
+                            {
+                                rectangleTaux.taux.setValueTaux(index, parseInt(text));
+                            }
+                        }
                     }
 
                     Rectangle {
@@ -633,6 +771,14 @@ Item {
                         anchors.topMargin: 5
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 5
+                        validator: IntValidator{bottom : 0; top : 100}
+                        onTextChanged:
+                        {
+                            if(etapeEnCours !== -1)
+                            {
+                                rectangleTaux.taux.setRatioTaux(index, parseInt(text));
+                            }
+                        }
                     }
                 }
             }
@@ -662,6 +808,26 @@ Item {
         anchors.leftMargin: 85
         font.bold: true
         font.pointSize: 9
+        onClicked:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).addItemTaux()
+                listTaux.append({"param" : 0, "condition" : 0, "value" : 0, "ratio" : 0, index:listTaux.count})
+            }
+        }
+    }
+
+    function updateTaux()
+    {
+        if(etapeEnCours !== -1 )
+        {
+            listTaux.clear()
+            for( var i = 0; i < gestEtape.getEtape(etapeEnCours).getNbTaux(); i++)
+            {
+                listTaux.append({"param" : gestEtape.getEtape(etapeEnCours).getParamTaux(i), "condition" : gestEtape.getEtape(etapeEnCours).getCondTaux(i), "value" : gestEtape.getEtape(etapeEnCours).getValueTaux(i), "ratio" : gestEtape.getEtape(etapeEnCours).getRatioTaux(i), index:listTaux.count})
+            }
+        }
     }
 
     Text {

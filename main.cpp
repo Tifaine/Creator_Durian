@@ -33,6 +33,7 @@
 #include <QtQml/QQmlEngine>
 #include "ControleRoboclaw/gestionroboclaw.h"
 #include "EditionStrategie/etape.h"
+#include "EditionStrategie/itemtaux.h"
 #include "EditionStrategie/gestionetape.h"
 #include <QQmlContext>
 
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
     QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
 
     qmlRegisterType<Etape>("etape", 1, 0, "Etape");
+    qmlRegisterType<Etape>("itemTaux", 1, 0, "ItemTaux");
 
     viewer.setTitle(QStringLiteral("Creator Durian"));
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);

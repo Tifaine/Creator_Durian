@@ -17,6 +17,7 @@ SOURCES += \
         ControleRoboclaw/gestionroboclaw.cpp \
         EditionStrategie/etape.cpp \
         EditionStrategie/gestionetape.cpp \
+        EditionStrategie/itemtaux.cpp \
         clientmqtt.cpp \
         main.cpp \
         threadmqtt.cpp
@@ -42,6 +43,7 @@ HEADERS += \
     ControleRoboclaw/gestionroboclaw.h \
     EditionStrategie/etape.h \
     EditionStrategie/gestionetape.h \
+    EditionStrategie/itemtaux.h \
     clientmqtt.h \
     threadmqtt.h
 

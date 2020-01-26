@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QDir>
 
 #include "etape.h"
 
@@ -16,8 +17,14 @@ public slots:
     void addEtape(Etape* etape);
     Etape* getEtape(int indice);
     int getIndiceEtape(Etape * etape);
+    int getNbEtape();
+
+    void toPrint();
+    void updateEtape();
 
 signals:
+
+private:
 
 private:
     QList<Etape* > listEtape;
