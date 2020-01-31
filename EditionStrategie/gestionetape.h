@@ -18,11 +18,13 @@ public slots:
     Etape* getEtape(int indice);
     int getIndiceEtape(Etape * etape);
     int getNbEtape();
+    void createNewEtape();
 
     void toPrint();
     void updateEtape();
 
 signals:
+    void stepUpdated();
 
 private:
 

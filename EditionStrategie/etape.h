@@ -3,6 +3,9 @@
 
 #include <QQuickItem>
 #include <QList>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "itemtaux.h"
 
 class Etape : public QQuickItem
@@ -14,6 +17,10 @@ class Etape : public QQuickItem
     Q_PROPERTY(int tempsMax READ getTempsMax WRITE setTempsMax NOTIFY tempsMaxChanged)
     Q_PROPERTY(int dateMax READ getDateMax WRITE setDateMax NOTIFY dateMaxChanged)
     Q_PROPERTY(int deadline READ getDeadline WRITE setDeadline NOTIFY deadlineChanged)
+    Q_PROPERTY(int x READ getX WRITE setX NOTIFY xModified)
+    Q_PROPERTY(int y READ getY WRITE setY NOTIFY yModified)
+    Q_PROPERTY(QString color READ getColor WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QString nameSequence READ getNameSequence WRITE setNameSequence NOTIFY nameSequenceChanged)
 
 public:
     Etape();   
@@ -24,6 +31,9 @@ public:
     int getDeadline() const;
     int getDateMax() const;
     int getTempsMax() const;
+    QJsonObject saveEtape();
+    void loadObject(QJsonObject);
+
 
 signals:
     void nomEtapeChanged();
@@ -32,6 +42,10 @@ signals:
     void tempsMaxChanged();
     void dateMaxChanged();
     void deadlineChanged();
+    void xModified();
+    void yModified();
+    void colorChanged();
+    void nameSequenceChanged();
 
 public slots:
     void setNomEtape(const QString &value);
@@ -55,6 +69,17 @@ public slots:
     void setRatioTaux(int indice, int value);
     int getRatioTaux(int indice);
 
+    int getX() const;
+    void setX(int value);
+
+    int getY() const;
+    void setY(int value);
+
+    QString getColor() const;
+    void setColor(const QString &value);
+
+    QString getNameSequence() const;
+    void setNameSequence(const QString &value);
 
     int getNbTaux();
 
@@ -67,6 +92,10 @@ private:
     int tempsMax;
     int dateMax;
     int deadline;
+    int x;
+    int y;
+    QString color;
+    QString nameSequence;
 
     QList<ItemTaux *> listTaux;
 

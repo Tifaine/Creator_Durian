@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.2
 import etape 1.0
 import itemTaux 1.0
 
@@ -11,6 +12,11 @@ Item {
 
     property int etapeEnCours: -1
 
+    Connections
+    {
+        target: gestEtape
+        onStepUpdated: updateEtape()
+    }
 
     ListModel
     {
@@ -134,6 +140,17 @@ Item {
                                 textFieldTpsMax.text = step.tempsMax
                                 textFieldDateMax.text = step.dateMax
                                 textFieldDeadline.text = step.deadline
+                                rectangleColor.color = step.color
+                                controlSequence.currentIndex = 0;
+                                for(var i = 0; i < cbmodel.count; i++)
+                                {
+                                    if(cbmodel.get(i).text === step.nameSequence)
+                                    {
+                                        controlSequence.currentIndex = i;
+                                        break;
+                                    }
+                                }
+
                                 etapeEnCours = index
                             }
                         }
@@ -226,6 +243,11 @@ Item {
         anchors.rightMargin: 5
         anchors.top: parent.top
         anchors.topMargin: 5
+        onClicked:
+        {
+            gestEtape.createNewEtape()
+            listComportement.append({"_nom" : "NewEtape", "index" : listComportement.count, "_color" : "#00ffffff"})
+        }
     }
 
     Text {
@@ -417,10 +439,173 @@ Item {
             {
                 gestEtape.getEtape(etapeEnCours).save()
                 gestEtape.updateEtape()
-                updateEtape()
             }
         }
     }
 
+    Rectangle {
+        id: rectangleColor
+        x: 275
+        width: 15
+        height: 15
+        color: "#ffffff"
+        radius: 15
+        anchors.right: buttonColor.left
+        anchors.rightMargin: 50
+        anchors.top: buttonSave.bottom
+        anchors.topMargin: 30
+
+    }
+
+    Button {
+        id: buttonColor
+        x: 375
+        text: qsTr("Editer couleur")
+        font.pointSize: 10
+        font.bold: true
+        anchors.top: buttonSave.bottom
+        anchors.topMargin: 18
+        anchors.right: textDeadLine.left
+        anchors.rightMargin: 270
+        onClicked: colorDialog.open()
+    }
+
+    ColorDialog {
+        id: colorDialog
+        title: "Choisir une couleur"
+        color:rectangleColor.color
+        onAccepted: {
+            console.log("You chose: " + colorDialog.color)
+            rectangleColor.color = colorDialog.color
+            if(etapeEnCours !== -1 )
+            {
+                gestEtape.getEtape(etapeEnCours).color = colorDialog.color
+            }
+        }
+        onRejected: {
+            console.log("Canceled")
+
+        }
+
+    }
+
+    ListModel {
+        id: cbmodel
+        ListElement { text: "-" }
+        ListElement { text: "Banana" }
+        ListElement { text: "Apple" }
+        ListElement { text: "Coconut" }
+    }
+
+    ComboBox {
+        id: controlSequence
+        width: 200
+        height: 40
+        anchors.right: textDeadLine.left
+        anchors.rightMargin: 270
+        anchors.top: buttonColor.bottom
+        anchors.topMargin: 70
+        model: cbmodel
+        currentIndex: 0
+
+        onCurrentIndexChanged:
+        {
+            if(etapeEnCours !== -1)
+            {
+                gestEtape.getEtape(etapeEnCours).nameSequence = currentText
+            }
+        }
+
+        delegate: ItemDelegate {
+            width: controlSequence.width
+            contentItem: Text {
+                text: modelData
+                color: "white"
+                font: controlSequence.font
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+            }
+            highlighted: controlSequence.highlightedIndex === index
+            background: Rectangle {
+                implicitWidth: 120
+                implicitHeight: 40
+                color:controlSequence.highlightedIndex === index ? "#262626" : "transparent"
+            }
+        }
+
+        indicator: Canvas {
+            id: canvas
+            x: controlSequence.width - width - controlSequence.rightPadding
+            y: controlSequence.topPadding + (controlSequence.availableHeight - height) / 2
+            width: 12
+            height: 8
+            contextType: "2d"
+
+            Connections {
+                target: controlSequence
+                onPressedChanged: canvas.requestPaint()
+            }
+
+            onPaint: {
+                context.reset();
+                context.moveTo(0, 0);
+                context.lineTo(width, 0);
+                context.lineTo(width / 2, height);
+                context.closePath();
+                context.fillStyle = controlSequence.pressed ? "#4d0000" : "#660000";
+                context.fill();
+            }
+        }
+
+        contentItem: Text {
+            leftPadding: 10
+            rightPadding: controlSequence.indicator.width + controlSequence.spacing
+
+            text: controlSequence.displayText
+            font: controlSequence.font
+            color: "white"
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+
+        background: Rectangle {
+            implicitWidth: 120
+            implicitHeight: 40
+            color:"#262626"
+            border.color: controlSequence.pressed ? "#4d0000" : "#66000"
+            border.width: controlSequence.visualFocus ? 2 : 1
+            radius: 2
+        }
+
+        popup: Popup {
+            y: controlSequence.height - 1
+            width: controlSequence.width
+            implicitHeight: contentItem.implicitHeight
+            padding: 1
+
+            contentItem: ListView {
+                clip: true
+                implicitHeight: contentHeight
+                model: controlSequence.popup.visible ? controlSequence.delegateModel : null
+                currentIndex: controlSequence.highlightedIndex
+
+                ScrollIndicator.vertical: ScrollIndicator { }
+            }
+
+            background: Rectangle {
+                border.color: "#4d0000"
+                color:"#363636"
+                radius: 2
+            }
+        }
+    }
+
+
 }
 
+
+/*##^##
+Designer {
+    D{i:38;anchors_y:299}D{i:39;anchors_y:287}D{i:41;anchors_width:120}
+}
+##^##*/

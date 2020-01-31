@@ -30,6 +30,12 @@ int GestionEtape::getNbEtape()
     return listEtape.size();
 }
 
+void GestionEtape::createNewEtape()
+{
+    listEtape.append(new Etape);
+    listEtape.last()->setNomEtape("NewEtape");
+}
+
 void GestionEtape::toPrint()
 {
     for(int i=0; i < getNbEtape() ; i++)
@@ -63,44 +69,11 @@ void GestionEtape::updateEtape()
             {
                 if(json["Etape"].isObject())
                 {
-                    QJsonObject etape = json["Etape"].toObject();
-                    if(etape.contains("nbPoints") )
-                    {
-                        step->setNbPoints(etape["nbPoints"].toInt());
-                    }
-                    if(etape.contains("tempsMoyen") )
-                    {
-                        step->setTempsMoyen(etape["tempsMoyen"].toInt());
-                    }
-                    if(etape.contains("tempsMax") )
-                    {
-                        step->setTempsMax(etape["tempsMax"].toInt());
-                    }
-                    if(etape.contains("dateMax") )
-                    {
-                        step->setDateMax(etape["dateMax"].toInt());
-                    }
-                    if(etape.contains("deadline") )
-                    {
-                        step->setDeadline(etape["deadline"].toInt());
-                    }
-                    if(etape.contains("TauxArray") )
-                    {
-                        QJsonArray array = etape["TauxArray"].toArray();
-                        foreach (const QJsonValue & v, array)
-                        {
-                            step->addItemTaux();
-                            QJsonObject obj = v.toObject();
-                            step->setCondTaux(step->getNbTaux()-1, obj.value("condition").toInt());
-                            step->setParamTaux(step->getNbTaux()-1, obj.value("param").toInt());
-                            step->setRatioTaux(step->getNbTaux()-1, obj.value("taux").toInt());
-                            step->setValueTaux(step->getNbTaux()-1, obj.value("valeur").toInt());
-
-                        }
-                    }
+                    step->loadObject(json["Etape"].toObject());
                 }
             }
         }
         addEtape(step);
     }
+    emit stepUpdated();
 }

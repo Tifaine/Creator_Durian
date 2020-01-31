@@ -9,7 +9,9 @@ Etape::Etape() :
     tempsMoyen(0),
     tempsMax(0),
     dateMax(0),
-    deadline(0)
+    deadline(0),
+    x(0),
+    y(0)
 {
 
 }
@@ -81,7 +83,7 @@ void Etape::addItemTaux()
 
 void Etape::setParamTaux(int indice, int value)
 {
-   listTaux.at(indice)->setParam(value);
+    listTaux.at(indice)->setParam(value);
 }
 
 int Etape::getParamTaux(int indice)
@@ -133,32 +135,8 @@ void Etape::save()
     }else
     {
         saveFile.flush();
-        QJsonObject saveObject;
-        saveObject["nomEtape"] = nomEtape;
-        saveObject["nbPoints"] = nbPoints;
-        saveObject["tempsMoyen"] = tempsMoyen;
-        saveObject["tempsMax"] = tempsMax;
-        saveObject["dateMax"] = dateMax;
-        saveObject["deadline"] = deadline;
 
-        QJsonArray array_Taux;
-        QString param("param");
-        QString condition("condition");
-        QString valeur("valeur");
-        QString taux("taux");
-        for(auto item : listTaux)
-        {
-            QJsonObject item_data;
-            item_data.insert(param, QJsonValue(item->getParam()));
-            item_data.insert(condition, QJsonValue(item->getCondition()));
-            item_data.insert(valeur, QJsonValue(item->getValeur()));
-            item_data.insert(taux, QJsonValue(item->getTaux()));
-
-            array_Taux.push_back(QJsonValue(item_data));
-        }
-
-        saveObject["TauxArray"] = array_Taux;
-
+        QJsonObject saveObject = saveEtape();
         QJsonObject etapeObject;
         etapeObject["Etape"] = saveObject;
         QJsonDocument saveDoc(etapeObject);
@@ -166,4 +144,134 @@ void Etape::save()
     }
 
     saveFile.close();
+}
+
+QJsonObject Etape::saveEtape()
+{
+    QJsonObject saveObject;
+    saveObject["nomEtape"] = nomEtape;
+    saveObject["nbPoints"] = nbPoints;
+    saveObject["tempsMoyen"] = tempsMoyen;
+    saveObject["tempsMax"] = tempsMax;
+    saveObject["dateMax"] = dateMax;
+    saveObject["deadline"] = deadline;
+    saveObject["color"] = color;
+    saveObject["sequenceName"] = nameSequence;
+    saveObject["xEtape"] = x;
+    saveObject["yEtape"] = y;
+
+    QJsonArray array_Taux;
+    QString param("param");
+    QString condition("condition");
+    QString valeur("valeur");
+    QString taux("taux");
+    for(auto item : listTaux)
+    {
+        QJsonObject item_data;
+        item_data.insert(param, QJsonValue(item->getParam()));
+        item_data.insert(condition, QJsonValue(item->getCondition()));
+        item_data.insert(valeur, QJsonValue(item->getValeur()));
+        item_data.insert(taux, QJsonValue(item->getTaux()));
+
+        array_Taux.push_back(QJsonValue(item_data));
+    }
+
+    saveObject["TauxArray"] = array_Taux;
+    return saveObject;
+}
+
+void Etape::loadObject(QJsonObject json)
+{
+    if(json.contains("nbPoints") )
+    {
+        setNbPoints(json["nbPoints"].toInt());
+    }
+    if(json.contains("tempsMoyen") )
+    {
+        setTempsMoyen(json["tempsMoyen"].toInt());
+    }
+    if(json.contains("tempsMax") )
+    {
+        setTempsMax(json["tempsMax"].toInt());
+    }
+    if(json.contains("dateMax") )
+    {
+        setDateMax(json["dateMax"].toInt());
+    }
+    if(json.contains("deadline") )
+    {
+        setDeadline(json["deadline"].toInt());
+    }
+    if(json.contains("color") )
+    {
+        setColor(json["color"].toString());
+    }
+    if(json.contains("sequenceName") )
+    {
+        setNameSequence(json["sequenceName"].toString());
+    }
+    if(json.contains("xEtape") )
+    {
+        setX(json["xEtape"].toInt());
+    }
+    if(json.contains("yEtape") )
+    {
+        setY(json["yEtape"].toInt());
+    }
+    if(json.contains("TauxArray") )
+    {
+        QJsonArray array = json["TauxArray"].toArray();
+        foreach (const QJsonValue & v, array)
+        {
+            addItemTaux();
+            QJsonObject obj = v.toObject();
+            setCondTaux(getNbTaux()-1, obj.value("condition").toInt());
+            setParamTaux(getNbTaux()-1, obj.value("param").toInt());
+            setRatioTaux(getNbTaux()-1, obj.value("taux").toInt());
+            setValueTaux(getNbTaux()-1, obj.value("valeur").toInt());
+
+        }
+    }
+}
+
+QString Etape::getNameSequence() const
+{
+    return nameSequence;
+}
+
+void Etape::setNameSequence(const QString &value)
+{
+    nameSequence = value;
+}
+
+int Etape::getY() const
+{
+    return y;
+}
+
+void Etape::setY(int value)
+{
+    y = value;
+    emit yModified();
+}
+
+int Etape::getX() const
+{
+    return x;
+}
+
+void Etape::setX(int value)
+{
+    x = value;
+    emit xModified();
+}
+
+QString Etape::getColor() const
+{
+    return color;
+}
+
+void Etape::setColor(const QString &value)
+{
+    color = value;
 }

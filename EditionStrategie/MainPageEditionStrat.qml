@@ -2,10 +2,19 @@ import QtQuick 2.12
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 
+import etape 1.0
+
 Item {
     id: element
     width: 1500
     height: 800
+    property bool comefromXTf : false
+    property bool comefromYTf : false
+    Connections
+    {
+        target: gestEtape
+        onStepUpdated: updateEtape()
+    }
 
     Image {
         id: name
@@ -20,7 +29,7 @@ Item {
     ListModel
     {
         id:listEtape
-        ListElement{ _x:25 ;  _y:100; index : 0}
+        ListElement{ _x:25 ;  _y:100; index : 0; _color : "steelblue"}
     }
 
     Repeater
@@ -32,10 +41,56 @@ Item {
         {
             x: _x
             y: _y
+            z: 3
             height: 15
             width: 15
             radius: 15
-            color: "blue"
+            color: _color
+            onXChanged:
+            {
+                if(etapeEnCours !== -1)
+                {
+                    _x = x
+                    gestStrat.getEtape(index).x = x
+                    if(comefromXTf === false)
+                    {
+                        tfX.text = Math.round((x + width / 2 - name.x) * 3000 / name.width - 1500)
+                    }else
+                    {
+                        comefromXTf = false
+                    }
+                }
+            }
+            onYChanged:
+            {
+                if(etapeEnCours !== -1)
+                {
+                    _y = y
+                    gestStrat.getEtape(index).y = y
+                    if(comefromYTf === false)
+                    {
+                        tfY.text = Math.round((y + height / 2 - name.y) * 2000 / name.height)
+                    }else
+                    {
+                        comefromYTf = false
+                    }
+                }
+            }
+
+            MouseArea
+            {
+                anchors.fill: parent
+                drag.target: parent;
+                propagateComposedEvents:true
+                onPressed:
+                {
+                    etapeEnCours = index
+                    tfX.text = Math.round((gestStrat.getEtape(index).x + width / 2 - name.x) * 3000 / name.width - 1500)
+                    tfY.text = Math.round((gestStrat.getEtape(index).y + height / 2 - name.y) * 2000 / name.height)
+
+                    updateTaux()
+                }
+            }
         }
     }
 
@@ -47,6 +102,8 @@ Item {
 
     Component.onCompleted:
     {
+        listEtape.clear()
+        gestStrat.clearList()
         updateEtape()
     }
 
@@ -65,7 +122,7 @@ Item {
         id: flickable
         height: 100
         flickableDirection: Flickable.HorizontalFlick
-        anchors.right: parent.right
+        anchors.right: buttonSave.left
         anchors.rightMargin: 5
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -164,7 +221,23 @@ Item {
                                 MenuItem
                                 {
                                     text: "Ajouter étape"
-                                    onClicked: element.state="State1"
+                                    onClicked:
+                                    {
+                                        element.state="State1"
+                                        etapeEnCours = -1
+                                        etapeDeBase = index
+                                        listEtape.append({"_x" : 25, "_y" : 100, index : listEtape.count, _color : gestEtape.getEtape(index).color})
+
+                                        gestStrat.addEtape(gestEtape.getEtape(etapeDeBase))
+                                        etapeEnCours = listEtape.count-1
+                                        gestStrat.getEtape(etapeEnCours).x = x
+                                        gestStrat.getEtape(etapeEnCours).y = y
+
+                                        tfX.text = Math.round((x + width / 2 - name.x) * 3000 / name.width - 1500)
+                                        tfY.text = Math.round((y + height / 2 - name.y) * 2000 / name.height)
+
+                                        updateTaux()
+                                    }
                                 }
                             }
                         }
@@ -183,6 +256,8 @@ Item {
         ListElement{ param:1 ; condition : 0; value:7; ratio:50; index:1}
     }
 
+    property var etapeEnCours : -1
+    property var etapeDeBase : -1
     Flickable
     {
         clip:true
@@ -214,7 +289,7 @@ Item {
             color:"transparent"
             visible: false
             Component.onCompleted: listTaux.clear()
-            //property var taux : etapeEnCours!==-1?gestEtape.getEtape(etapeEnCours):0
+            property var taux : etapeEnCours!==-1?gestStrat.getEtape(etapeEnCours):0
 
             property int behaviorSelected:-1
             Repeater
@@ -248,10 +323,10 @@ Item {
                         currentIndex: param
                         onCurrentIndexChanged:
                         {
-                            /*if(etapeEnCours !== -1)
+                            if(etapeEnCours !== -1)
                             {
                                 rectangleTaux.taux.setParamTaux(index, currentIndex)
-                            }*/
+                            }
                         }
 
                         delegate: ItemDelegate {
@@ -375,10 +450,10 @@ Item {
                         currentIndex: condition
                         onCurrentIndexChanged:
                         {
-                            /*if (etapeEnCours !== -1)
+                            if (etapeEnCours !== -1)
                             {
                                 rectangleTaux.taux.setCondTaux(index, currentIndex)
-                            }*/
+                            }
                         }
 
                         model: [">", "=", "<"]
@@ -493,10 +568,10 @@ Item {
                         validator: IntValidator{bottom : 0; top : 100}
                         onTextChanged:
                         {
-                            /*if(etapeEnCours !== -1)
+                            if(etapeEnCours !== -1)
                             {
                                 rectangleTaux.taux.setValueTaux(index, parseInt(text));
-                            }*/
+                            }
                         }
                     }
 
@@ -525,10 +600,10 @@ Item {
                         validator: IntValidator{bottom : 0; top : 100}
                         onTextChanged:
                         {
-                            /*if(etapeEnCours !== -1)
+                            if(etapeEnCours !== -1)
                             {
                                 rectangleTaux.taux.setRatioTaux(index, parseInt(text));
-                            }*/
+                            }
                         }
                     }
                 }
@@ -563,11 +638,8 @@ Item {
         font.pointSize: 9
         onClicked:
         {
-            //if(etapeEnCours !== -1 )
-            {
-                //gestEtape.getEtape(etapeEnCours).addItemTaux()
-                listTaux.append({"param" : 0, "condition" : 0, "value" : 0, "ratio" : 0, index:listTaux.count})
-            }
+            gestStrat.getEtape(etapeEnCours).addItemTaux()
+            listTaux.append({"param" : 0, "condition" : 0, "value" : 0, "ratio" : 0, index:listTaux.count})
         }
     }
 
@@ -576,9 +648,9 @@ Item {
         if(etapeEnCours !== -1 )
         {
             listTaux.clear()
-            for( var i = 0; i < gestEtape.getEtape(etapeEnCours).getNbTaux(); i++)
+            for( var i = 0; i < gestStrat.getEtape(etapeEnCours).getNbTaux(); i++)
             {
-                listTaux.append({"param" : gestEtape.getEtape(etapeEnCours).getParamTaux(i), "condition" : gestEtape.getEtape(etapeEnCours).getCondTaux(i), "value" : gestEtape.getEtape(etapeEnCours).getValueTaux(i), "ratio" : gestEtape.getEtape(etapeEnCours).getRatioTaux(i), index:listTaux.count})
+                listTaux.append({"param" : gestStrat.getEtape(etapeEnCours).getParamTaux(i), "condition" : gestStrat.getEtape(etapeEnCours).getCondTaux(i), "value" : gestStrat.getEtape(etapeEnCours).getValueTaux(i), "ratio" : gestStrat.getEtape(etapeEnCours).getRatioTaux(i), index:listTaux.count})
             }
         }
     }
@@ -695,6 +767,14 @@ Item {
         anchors.leftMargin: 10
         anchors.top: textNomAction.bottom
         anchors.topMargin: 11
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                comefromXTf = true
+                gestStrat.getEtape(etapeEnCours).x = ((parseInt(text) + 1500) * (name.width / 3000 ) + name.x ) - (15 / 2 )
+            }
+        }
     }
 
     TextField {
@@ -706,7 +786,265 @@ Item {
         anchors.leftMargin: 10
         anchors.top: tfX.bottom
         anchors.topMargin: 11
+        onTextChanged:
+        {
+            if(etapeEnCours !== -1 )
+            {
+                comefromYTf = true
+                gestStrat.getEtape(etapeEnCours).y = parseInt(text) * name.height / 2000 + name.y - (15 / 2)
+            }
+        }
+
     }
+
+    Button {
+        id: buttonSave
+        x: 1538
+        text: qsTr("Sauvegarder")
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        onClicked:popup.open()
+    }
+
+    Popup {
+        id: popup
+        x: 500
+        y: 300
+        width: 200
+        height: 100
+        modal: true
+        focus: true
+        contentItem:
+            Rectangle {
+            anchors.fill: parent
+            TextField
+            {
+                id:tfSaveName
+                text:"Strat"
+                height:40
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+            }
+            Button
+            {
+                id:validButton
+                text:"Enregistrer"
+                anchors.top: tfSaveName.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width/2 + 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                onClicked:
+                {
+                    gestStrat.saveStrategie(tfSaveName.text)
+                    popup.close()
+                }
+            }
+            Button
+            {
+                id:closeButton
+                text:"Annuler"
+                anchors.top: tfSaveName.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/2 + 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                onClicked:
+                {
+                    popup.close()
+                }
+            }
+        }
+    }
+
+    ListModel {
+        id: modelLoad
+        ListElement { text: "-" }
+    }
+
+    Button {
+        id: buttonLoad
+        x: 1538
+        text: qsTr("Charger")
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.top: buttonSave.bottom
+        anchors.topMargin: 5
+        onClicked:
+        {
+            modelLoad.clear()
+            gestStrat.updateStrat()
+            for(var i = 0; i < gestStrat.getNbStrat(); i++)
+            {
+                modelLoad.append({"text" : gestStrat.getNameStrat(i)})
+            }
+
+            popupLoad.open()
+        }
+    }
+
+
+    Popup {
+        id: popupLoad
+        x: 500
+        y: 300
+        width: 200
+        height: 100
+        modal: true
+        focus: true
+        contentItem:
+            Rectangle {
+            anchors.fill: parent
+
+            ComboBox {
+                id: controlLoad
+                height:40
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                model: modelLoad
+                currentIndex: 0
+                onCurrentIndexChanged:
+                {
+
+                }
+
+                delegate: ItemDelegate {
+                    width: controlLoad.width
+                    contentItem: Text {
+                        text: modelData
+                        color: "white"
+                        font: controlLoad.font
+                        elide: Text.ElideRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    highlighted: controlLoad.highlightedIndex === index
+                    background: Rectangle {
+                        implicitWidth: 120
+                        implicitHeight: 40
+                        color:controlLoad.highlightedIndex === index ? "#262626" : "transparent"
+                    }
+                }
+
+                indicator: Canvas {
+                    id: canvasLoad
+                    x: controlLoad.width - width - controlLoad.rightPadding
+                    y: controlLoad.topPadding + (controlLoad.availableHeight - height) / 2
+                    width: 12
+                    height: 8
+                    contextType: "2d"
+
+                    Connections {
+                        target: controlLoad
+                        onPressedChanged: canvasLoad.requestPaint()
+                    }
+
+                    onPaint: {
+                        context.reset();
+                        context.moveTo(0, 0);
+                        context.lineTo(width, 0);
+                        context.lineTo(width / 2, height);
+                        context.closePath();
+                        context.fillStyle = controlLoad.pressed ? "#4d0000" : "#660000";
+                        context.fill();
+                    }
+                }
+
+                contentItem: Text {
+                    leftPadding: 10
+                    rightPadding: controlLoad.indicator.width + controlLoad.spacing
+
+                    text: controlLoad.displayText
+                    font: controlLoad.font
+                    color: "white"
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                background: Rectangle {
+                    implicitWidth: 120
+                    implicitHeight: 40
+                    color:"#262626"
+                    border.color: controlLoad.pressed ? "#4d0000" : "#66000"
+                    border.width: controlLoad.visualFocus ? 2 : 1
+                    radius: 2
+                }
+
+                popup: Popup {
+                    y: controlLoad.height - 1
+                    width: controlLoad.width
+                    implicitHeight: contentItem.implicitHeight
+                    padding: 1
+
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        model: controlLoad.popup.visible ? controlLoad.delegateModel : null
+                        currentIndex: controlLoad.highlightedIndex
+
+                        ScrollIndicator.vertical: ScrollIndicator { }
+                    }
+
+                    background: Rectangle {
+                        border.color: "#4d0000"
+                        color:"#363636"
+                        radius: 2
+                    }
+                }
+            }
+            Button
+            {
+                id:validButtonLoad
+                text:"Charger"
+                anchors.top: controlLoad.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width/2 + 5
+                anchors.right: parent.right
+                anchors.rightMargin: 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                onClicked:
+                {
+                    //gestStrat.saveStrategie(tfSaveName.text)
+                    popupLoad.close()
+                }
+            }
+            Button
+            {
+                id:closeButtonLoad
+                text:"Annuler"
+                anchors.top: controlLoad.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/2 + 5
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 5
+                onClicked:
+                {
+                    popupLoad.close()
+                }
+            }
+        }
+    }
+
     states: [
         State {
             name: "State1"
@@ -786,9 +1124,9 @@ Item {
 
 /*##^##
 Designer {
-    D{i:19;anchors_height:100;anchors_width:959}D{i:58;anchors_height:15}D{i:59;anchors_height:15}
-D{i:60;anchors_height:15}D{i:61;anchors_height:15}D{i:62;anchors_x:993;anchors_y:115}
+    D{i:19;anchors_height:100;anchors_width:959}D{i:58;anchors_height:15}D{i:60;anchors_height:15}
+D{i:59;anchors_height:15}D{i:61;anchors_height:15}D{i:62;anchors_x:993;anchors_y:115}
 D{i:63;anchors_x:960;anchors_y:141}D{i:64;anchors_x:960;anchors_y:175}D{i:65;anchors_x:987;anchors_y:137}
-D{i:66;anchors_x:991;anchors_y:173}
+D{i:66;anchors_x:991;anchors_y:173}D{i:72;anchors_y:8}D{i:73;anchors_y:60}
 }
 ##^##*/
