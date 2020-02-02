@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 import "ElementQML"
 import "ControleRoboclaw"
 import "EditionStrategie"
+import "EditionSequence"
 
 Item {
     visible: true
@@ -66,31 +67,37 @@ Item {
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=true
                     editeurEtape.visible=false
+                    mainPageCreationAction.visible=false
                     break;
                 case 1:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=true
+                    mainPageCreationAction.visible=false
                     break;
                 case 2:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
+                    mainPageCreationAction.visible=false
                     break;
                 case 3:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
+                    mainPageCreationAction.visible=true
                     break;
                 case 4:
                     mainPageRoboclaw.visible=true
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
+                    mainPageCreationAction.visible=false
                     break;
                 case 5:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
+                    mainPageCreationAction.visible=false
                     break;
                 }
             }
@@ -124,6 +131,16 @@ Item {
             anchors.rightMargin: 0
             visible: false
             anchors.left: choixOngletSide.right
+            anchors.bottom: parent.bottom
+            anchors.top: parent.top
+            anchors.leftMargin: 0
+        }
+
+        PageCreationAction {
+            id: mainPageCreationAction
+            visible: false
+            anchors.left: choixOngletSide.right
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
             anchors.leftMargin: 0

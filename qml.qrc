@@ -8,5 +8,6 @@
         <file>ControleRoboclaw/PanneauControleVitesse.qml</file>
         <file>EditionStrategie/MainPageEditionStrat.qml</file>
         <file>EditionStrategie/EditeurEtape.qml</file>
+        <file>EditionSequence/PageCreationAction.qml</file>
     </qresource>
 </RCC>

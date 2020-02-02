@@ -3,7 +3,6 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import etape 1.0
-import itemTaux 1.0
 
 Item {
     id: element
@@ -508,7 +507,8 @@ Item {
         model: cbmodel
         currentIndex: 0
 
-        onCurrentIndexChanged:
+
+        onCurrentTextChanged:
         {
             if(etapeEnCours !== -1)
             {

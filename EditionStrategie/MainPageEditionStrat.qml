@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
-
+import QtGraphicalEffects 1.0
 import etape 1.0
 
 Item {
@@ -29,7 +29,8 @@ Item {
     ListModel
     {
         id:listEtape
-        ListElement{ _x:25 ;  _y:100; index : 0; _color : "steelblue"}
+        ListElement{ _x:25 ;  _y:100; index : 0; _color : "steelblue"; _name : "Etape"; _dateMax:0;
+            _deadLine : 0; _nbPoints : 0; _sequenceName: ""; _tempsMax : 0; _tempsMoyen : 0}
     }
 
     Repeater
@@ -39,19 +40,22 @@ Item {
         anchors.fill: parent
         Rectangle
         {
+            property bool stepOk : false
             x: _x
             y: _y
             z: 3
             height: 15
             width: 15
             radius: 15
+            border.color: etapeEnCours===step?"pink":"transparent"
+            border.width: 2
             color: _color
             onXChanged:
             {
-                if(etapeEnCours !== -1)
+                if(stepOk === true)
                 {
                     _x = x
-                    gestStrat.getEtape(index).x = x
+                    step.x = x
                     if(comefromXTf === false)
                     {
                         tfX.text = Math.round((x + width / 2 - name.x) * 3000 / name.width - 1500)
@@ -61,12 +65,13 @@ Item {
                     }
                 }
             }
+
             onYChanged:
             {
-                if(etapeEnCours !== -1)
+                if(stepOk === true)
                 {
                     _y = y
-                    gestStrat.getEtape(index).y = y
+                    step.y = y
                     if(comefromYTf === false)
                     {
                         tfY.text = Math.round((y + height / 2 - name.y) * 2000 / name.height)
@@ -84,20 +89,52 @@ Item {
                 propagateComposedEvents:true
                 onPressed:
                 {
-                    etapeEnCours = index
-                    tfX.text = Math.round((gestStrat.getEtape(index).x + width / 2 - name.x) * 3000 / name.width - 1500)
-                    tfY.text = Math.round((gestStrat.getEtape(index).y + height / 2 - name.y) * 2000 / name.height)
-
+                    etapeEnCours = step
+                    tfX.text = Math.round((step.x + width / 2 - name.x) * 3000 / name.width - 1500)
+                    tfY.text = Math.round((step.y + height / 2 - name.y) * 2000 / name.height)
+                    textNomAction.text = "Nom Action : " + step.nameSequence
                     updateTaux()
+                    element.state="State1"
                 }
             }
+
+            Etape
+            {
+                id:step
+                color:_color
+                x:_x
+                y:_y
+                nomEtape: _name
+                dateMax: _dateMax
+                deadline: _deadLine
+                nbPoints: _nbPoints
+                nameSequence: _sequenceName
+                tempsMax: _tempsMax
+                tempsMoyen: _tempsMoyen
+
+                Component.onCompleted:
+                {
+                    gestStrat.addEtape(step)
+                    stepOk = true
+                }
+            }
+            function addTaux(param, cond, value, ratio)
+            {
+                step.addItemTaux()
+                step.setParamTaux(step.getNbTaux()-1, param)
+                step.setCondTaux(step.getNbTaux()-1, cond)
+                step.setValueTaux(step.getNbTaux()-1, value)
+                step.setRatioTaux(step.getNbTaux()-1, ratio)
+            }
+
         }
     }
 
     ListModel
     {
         id:listComportement
-        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"}
+        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"; colorEtape: "white"; _dateMax:0;
+            _deadLine : 0; _nbPoints : 0; _sequenceName: ""; _tempsMax : 0; _tempsMoyen : 0}
     }
 
     Component.onCompleted:
@@ -112,7 +149,9 @@ Item {
         listComportement.clear();
         for(var i = 0; i < gestEtape.getNbEtape(); i++)
         {
-            listComportement.append({"_nom" : gestEtape.getEtape(i).nomEtape, "index" : listComportement.count, "_color" : "#00ffffff"})
+            listComportement.append({"_nom" : gestEtape.getEtape(i).nomEtape, "index" : listComportement.count, "_color" : "#00ffffff", "colorEtape" : gestEtape.getEtape(i).color,
+                                        "_dateMax" : gestEtape.getEtape(i).dateMax, "_deadLine" : gestEtape.getEtape(i).deadline, "_nbPoints" : gestEtape.getEtape(i).nbPoints,
+                                        "_sequenceName" : gestEtape.getEtape(i).nameSequence, "_tempsMax" : gestEtape.getEtape(i).tempsMax, "_tempsMoyen" : gestEtape.getEtape(i).tempsMoyen})
         }
     }
 
@@ -199,15 +238,26 @@ Item {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         }
 
+                        Etape
+                        {
+                            id:papaStep
+                            color:colorEtape
+                            nomEtape: _nom
+                            dateMax:  _dateMax
+                            deadline: _deadLine
+                            nbPoints: _nbPoints
+                            nameSequence: _sequenceName
+                            tempsMax: _tempsMax
+                            tempsMoyen: _tempsMoyen
+                        }
+
                         MouseArea
                         {
                             anchors.fill: parent
                             z:1
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
-
                             onClicked:
                             {
-
                                 rectangle5.updateColor(index)
                                 if(mouse.button === Qt.RightButton)
                                 {
@@ -223,20 +273,12 @@ Item {
                                     text: "Ajouter étape"
                                     onClicked:
                                     {
-                                        element.state="State1"
                                         etapeEnCours = -1
-                                        etapeDeBase = index
-                                        listEtape.append({"_x" : 25, "_y" : 100, index : listEtape.count, _color : gestEtape.getEtape(index).color})
+                                        listEtape.append({"_x" : 25, "_y" : 100, index : listEtape.count, _color : papaStep.color, _name : papaStep.nomEtape,
+                                                             "_dateMax" : papaStep.dateMax, "_deadLine" : papaStep.deadline,
+                                                             "_nbPoints" : papaStep.nbPoints,"_sequenceName" : papaStep.nameSequence,
+                                                             "_tempsMax" : papaStep.tempsMax, "_tempsMoyen" : papaStep.tempsMoyen})
 
-                                        gestStrat.addEtape(gestEtape.getEtape(etapeDeBase))
-                                        etapeEnCours = listEtape.count-1
-                                        gestStrat.getEtape(etapeEnCours).x = x
-                                        gestStrat.getEtape(etapeEnCours).y = y
-
-                                        tfX.text = Math.round((x + width / 2 - name.x) * 3000 / name.width - 1500)
-                                        tfY.text = Math.round((y + height / 2 - name.y) * 2000 / name.height)
-
-                                        updateTaux()
                                     }
                                 }
                             }
@@ -257,7 +299,6 @@ Item {
     }
 
     property var etapeEnCours : -1
-    property var etapeDeBase : -1
     Flickable
     {
         clip:true
@@ -289,7 +330,7 @@ Item {
             color:"transparent"
             visible: false
             Component.onCompleted: listTaux.clear()
-            property var taux : etapeEnCours!==-1?gestStrat.getEtape(etapeEnCours):0
+            property var taux : etapeEnCours!==-1?etapeEnCours:0
 
             property int behaviorSelected:-1
             Repeater
@@ -557,7 +598,7 @@ Item {
 
                     TextField {
                         id: textFieldValue
-                        width: (flickableTaux.width-25)/4
+                        width: flickableTaux.width/4 - 15
                         text: value
                         anchors.left: rectangleCondValue.right
                         anchors.leftMargin: 5
@@ -566,6 +607,14 @@ Item {
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 5
                         validator: IntValidator{bottom : 0; top : 100}
+                        color: "white"
+                        background: Rectangle {
+                            color:"#22ffffff"
+                            radius: 10
+                            border.color: "#333"
+                            anchors.fill: parent
+                            border.width: 1
+                        }
                         onTextChanged:
                         {
                             if(etapeEnCours !== -1)
@@ -589,7 +638,7 @@ Item {
 
                     TextField {
                         id: textFieldRatio
-                        width: (flickableTaux.width-25)/4
+                        width: (flickableTaux.width)/4 - 15
                         text: ratio
                         anchors.left: rectangleValueRatio.right
                         anchors.leftMargin: 5
@@ -598,6 +647,14 @@ Item {
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 5
                         validator: IntValidator{bottom : 0; top : 100}
+                        color: "white"
+                        background: Rectangle {
+                            color:"#22ffffff"
+                            anchors.fill: textFieldRatio
+                            radius: 10
+                            border.color: "#333"
+                            border.width: 1
+                        }
                         onTextChanged:
                         {
                             if(etapeEnCours !== -1)
@@ -638,7 +695,7 @@ Item {
         font.pointSize: 9
         onClicked:
         {
-            gestStrat.getEtape(etapeEnCours).addItemTaux()
+            etapeEnCours.addItemTaux()
             listTaux.append({"param" : 0, "condition" : 0, "value" : 0, "ratio" : 0, index:listTaux.count})
         }
     }
@@ -647,10 +704,11 @@ Item {
     {
         if(etapeEnCours !== -1 )
         {
+            var count = etapeEnCours.getNbTaux()
             listTaux.clear()
-            for( var i = 0; i < gestStrat.getEtape(etapeEnCours).getNbTaux(); i++)
+            for( var i = 0; i < count; i++)
             {
-                listTaux.append({"param" : gestStrat.getEtape(etapeEnCours).getParamTaux(i), "condition" : gestStrat.getEtape(etapeEnCours).getCondTaux(i), "value" : gestStrat.getEtape(etapeEnCours).getValueTaux(i), "ratio" : gestStrat.getEtape(etapeEnCours).getRatioTaux(i), index:listTaux.count})
+                listTaux.append({"param" : etapeEnCours.getParamTaux(i), "condition" : etapeEnCours.getCondTaux(i), "value" : etapeEnCours.getValueTaux(i), "ratio" : etapeEnCours.getRatioTaux(i), index:listTaux.count})
             }
         }
     }
@@ -689,7 +747,7 @@ Item {
 
     Text {
         id: textValue
-        width: 142
+        width: 88
         height: 15
         color: "#ffffff"
         text: qsTr("Valeur")
@@ -705,7 +763,8 @@ Item {
 
     Text {
         id: textTaux
-        width: 133
+        y: 430
+        width: 119
         height: 15
         color: "#ffffff"
         text: qsTr("Taux")
@@ -715,7 +774,7 @@ Item {
         font.bold: true
         horizontalAlignment: Text.AlignHCenter
         anchors.left: textValue.right
-        anchors.leftMargin: 0
+        anchors.leftMargin: 14
         font.pixelSize: 13
     }
 
@@ -760,6 +819,7 @@ Item {
 
     TextField {
         id: tfX
+        width: 100
         height: 25
         text: qsTr("Text Field")
         visible: false
@@ -767,18 +827,27 @@ Item {
         anchors.leftMargin: 10
         anchors.top: textNomAction.bottom
         anchors.topMargin: 11
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            anchors.fill: parent
+            radius: 10
+            border.color: "#333"
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
             {
                 comefromXTf = true
-                gestStrat.getEtape(etapeEnCours).x = ((parseInt(text) + 1500) * (name.width / 3000 ) + name.x ) - (15 / 2 )
+                etapeEnCours.x = ((parseInt(text) + 1500) * (name.width / 3000 ) + name.x ) - (15 / 2 )
             }
         }
     }
 
     TextField {
         id: tfY
+        width: 100
         height: 25
         text: qsTr("Text Field")
         visible: false
@@ -786,12 +855,20 @@ Item {
         anchors.leftMargin: 10
         anchors.top: tfX.bottom
         anchors.topMargin: 11
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            anchors.fill: parent
+            radius: 10
+            border.color: "#333"
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
             {
                 comefromYTf = true
-                gestStrat.getEtape(etapeEnCours).y = parseInt(text) * name.height / 2000 + name.y - (15 / 2)
+                etapeEnCours.y = parseInt(text) * name.height / 2000 + name.y - (15 / 2)
             }
         }
 
@@ -810,39 +887,87 @@ Item {
 
     Popup {
         id: popup
-        x: 500
-        y: 300
+        x: 550
+        y: 350
         width: 200
         height: 100
         modal: true
         focus: true
+        background: Rectangle
+        {
+            anchors.fill: parent
+            LinearGradient {
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/2
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                start: Qt.point(0, 0)
+                end: Qt.point(parent.width/2, parent.height)
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#0d0d0d" }
+                    GradientStop { position: 1.0; color: "#262626" }
+                }
+            }
+
+            LinearGradient {
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width/2
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                start: Qt.point(parent.width/2, 0)
+                end: Qt.point(0, parent.height)
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#0d0d0d" }
+                    GradientStop { position: 1.0; color: "#262626" }
+                }
+            }
+        }
         contentItem:
             Rectangle {
             anchors.fill: parent
+            color:"transparent"
             TextField
             {
                 id:tfSaveName
                 text:"Strat"
                 height:40
                 anchors.top: parent.top
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
-                anchors.leftMargin: 5
+                anchors.leftMargin: 15
                 anchors.right: parent.right
-                anchors.rightMargin: 5
+                anchors.rightMargin: 15
+                color: "white"
+                background: Rectangle {
+                    color:"#22ffffff"
+                    radius: 10
+                    anchors.fill: parent
+                    implicitWidth: 100
+                    implicitHeight: 24
+                    border.color: "#333"
+                    border.width: 1
+                }
             }
             Button
             {
                 id:validButton
                 text:"Enregistrer"
                 anchors.top: tfSaveName.bottom
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
                 anchors.leftMargin: parent.width/2 + 5
                 anchors.right: parent.right
-                anchors.rightMargin: 5
+                anchors.rightMargin: 15
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
+                anchors.bottomMargin: 10
                 onClicked:
                 {
                     gestStrat.saveStrategie(tfSaveName.text)
@@ -854,13 +979,13 @@ Item {
                 id:closeButton
                 text:"Annuler"
                 anchors.top: tfSaveName.bottom
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
-                anchors.leftMargin: 5
+                anchors.leftMargin: 15
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/2 + 5
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
+                anchors.bottomMargin: 10
                 onClicked:
                 {
                     popup.close()
@@ -904,19 +1029,59 @@ Item {
         height: 100
         modal: true
         focus: true
+        background: Rectangle
+        {
+            anchors.fill: parent
+            radius:25
+            LinearGradient {
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/2
+                anchors.left: parent.left
+                anchors.leftMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                start: Qt.point(0, 0)
+                end: Qt.point(parent.width/2, parent.height)
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#0d0d0d" }
+                    GradientStop { position: 1.0; color: "#262626" }
+                }
+            }
+
+            LinearGradient {
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width/2
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                start: Qt.point(parent.width/2, 0)
+                end: Qt.point(0, parent.height)
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#0d0d0d" }
+                    GradientStop { position: 1.0; color: "#262626" }
+                }
+            }
+        }
+
+
         contentItem:
             Rectangle {
             anchors.fill: parent
-
+            color:"transparent"
             ComboBox {
                 id: controlLoad
                 height:40
                 anchors.top: parent.top
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
-                anchors.leftMargin: 5
+                anchors.leftMargin: 15
                 anchors.right: parent.right
-                anchors.rightMargin: 5
+                anchors.rightMargin: 15
                 model: modelLoad
                 currentIndex: 0
                 onCurrentIndexChanged:
@@ -955,13 +1120,14 @@ Item {
                     }
 
                     onPaint: {
-                        context.reset();
-                        context.moveTo(0, 0);
-                        context.lineTo(width, 0);
-                        context.lineTo(width / 2, height);
-                        context.closePath();
-                        context.fillStyle = controlLoad.pressed ? "#4d0000" : "#660000";
-                        context.fill();
+                        var ctx = getContext("2d");
+                        ctx.reset();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(width, 0);
+                        ctx.lineTo(width / 2, height);
+                        ctx.closePath();
+                        ctx.fillStyle = controlLoad.pressed ? "#4d0000" : "#660000";
+                        ctx.fill();
                     }
                 }
 
@@ -1012,31 +1178,35 @@ Item {
                 id:validButtonLoad
                 text:"Charger"
                 anchors.top: controlLoad.bottom
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
                 anchors.leftMargin: parent.width/2 + 5
                 anchors.right: parent.right
-                anchors.rightMargin: 5
+                anchors.rightMargin: 15
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
+                anchors.bottomMargin: 10
                 onClicked:
                 {
-                    //gestStrat.saveStrategie(tfSaveName.text)
+                    listEtape.clear();
+                    gestStrat.openStrat(controlLoad.currentText)
+
                     popupLoad.close()
                 }
             }
+
+
             Button
             {
                 id:closeButtonLoad
                 text:"Annuler"
                 anchors.top: controlLoad.bottom
-                anchors.topMargin: 5
+                anchors.topMargin: 10
                 anchors.left: parent.left
-                anchors.leftMargin: 5
+                anchors.leftMargin: 15
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/2 + 5
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 5
+                anchors.bottomMargin: 10
                 onClicked:
                 {
                     popupLoad.close()
@@ -1044,6 +1214,23 @@ Item {
             }
         }
     }
+
+    Connections
+    {
+        target:gestStrat
+        onNouvelleEtape:
+        {
+            listEtape.append({"_x" : x, "_y" : y, index : listEtape.count, _color : color, _name : nom,
+                                 "_dateMax" : dateMax, "_deadLine" : deadLine,
+                                 "_nbPoints" : nbPoints,"_sequenceName" : nameSequence,
+                                 "_tempsMax" : tempsMax, "_tempsMoyen" : tempsMoyen})
+        }
+        onNouveauTaux:
+        {
+            repeaterListEtape.itemAt(indice).addTaux(param, cond, value, ratio)
+        }
+    }
+
 
     states: [
         State {
@@ -1124,9 +1311,9 @@ Item {
 
 /*##^##
 Designer {
-    D{i:19;anchors_height:100;anchors_width:959}D{i:58;anchors_height:15}D{i:60;anchors_height:15}
-D{i:59;anchors_height:15}D{i:61;anchors_height:15}D{i:62;anchors_x:993;anchors_y:115}
-D{i:63;anchors_x:960;anchors_y:141}D{i:64;anchors_x:960;anchors_y:175}D{i:65;anchors_x:987;anchors_y:137}
+    D{i:19;anchors_height:100;anchors_width:959}D{i:59;anchors_height:15}D{i:58;anchors_height:15}
+D{i:60;anchors_height:15}D{i:63;anchors_x:960;anchors_y:141}D{i:62;anchors_x:993;anchors_y:115}
+D{i:61;anchors_height:15}D{i:64;anchors_x:960;anchors_y:175}D{i:65;anchors_x:987;anchors_y:137}
 D{i:66;anchors_x:991;anchors_y:173}D{i:72;anchors_y:8}D{i:73;anchors_y:60}
 }
 ##^##*/

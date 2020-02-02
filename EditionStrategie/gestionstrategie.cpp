@@ -11,15 +11,7 @@ GestionStrategie::GestionStrategie(QObject *parent) : QObject(parent)
 
 void GestionStrategie::addEtape(Etape * etape)
 {
-    listEtape.append(new Etape);
-
-    listEtape.last()->setNomEtape(etape->getNomEtape());
-    listEtape.last()->setNbPoints(etape->getNbPoints());
-    listEtape.last()->setTempsMoyen(etape->getTempsMoyen());
-    listEtape.last()->setTempsMax(etape->getTempsMax());
-    listEtape.last()->setDateMax(etape->getDateMax());
-    listEtape.last()->setDeadline(etape->getDeadline());
-    listEtape.last()->setColor(etape->getColor());
+    listEtape.append(etape);
 }
 
 Etape* GestionStrategie::getEtape(int indice)
@@ -33,7 +25,6 @@ Etape* GestionStrategie::getEtape(int indice)
 
 Etape* GestionStrategie::getEtape(Etape * step)
 {
-    qDebug()<<"Ici "<<listEtape.indexOf(step);
     return listEtape.at(listEtape.indexOf(step));
 }
 
@@ -89,4 +80,44 @@ int GestionStrategie::getNbStrat()
 QString GestionStrategie::getNameStrat(int indice)
 {
     return listStrat.at(indice);
+}
+
+void GestionStrategie::openStrat(QString nomStrat)
+{
+    listEtape.clear();
+    QFile loadFile("data/Strategie/"+nomStrat+".json");
+    if(!loadFile.open(QIODevice::ReadOnly))
+    {
+        qDebug()<<"Failed !";
+    }else
+    {
+        QByteArray saveData = loadFile.readAll();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        QJsonObject json = loadDoc.object();
+        if (json.contains("Strategie") )
+        {
+            if(json["Strategie"].isArray())
+            {
+                QJsonArray array = json["Strategie"].toArray();
+                int indice = 0;
+                foreach (const QJsonValue & v, array)
+                {
+                    Etape foo;
+                    foo.loadObject(v.toObject());
+                    emit nouvelleEtape(foo.getNomEtape(), foo.getNbPoints(), foo.getTempsMoyen(), foo.getTempsMax(), foo.getDateMax(), foo.getDeadline(), foo.getX(), foo.getY(), foo.getColor(), foo.getNameSequence());
+
+                    for(int i=0; i<foo.getNbTaux();i++)
+                    {
+                        emit nouveauTaux(indice, foo.getParamTaux(i), foo.getCondTaux(i), foo.getValueTaux(i), foo.getRatioTaux(i));
+                    }
+                    indice++;
+                }
+            }
+        }
+    }
+}
+
+int GestionStrategie::getNbEtape()
+{
+    return listEtape.size();
 }

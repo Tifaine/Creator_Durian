@@ -21,9 +21,13 @@ public slots:
     void updateStrat();
     int getNbStrat();
     QString getNameStrat(int indice);
+    void openStrat(QString nomStrat);
+    int getNbEtape();
 
 
 signals:
+    void nouvelleEtape(QString nom, int nbPoints, int tempsMoyen, int tempsMax, int dateMax, int deadLine, int x, int y, QString color, QString nameSequence);
+    void nouveauTaux(int indice, int param, int cond, int value, int ratio);
 
 private:
     QList <Etape *> listEtape;
