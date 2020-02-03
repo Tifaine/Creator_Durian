@@ -37,6 +37,7 @@
 #include "EditionStrategie/gestionetape.h"
 #include "EditionStrategie/gestionstrategie.h"
 #include "EditionSequence/action.h"
+#include "EditionSequence/gestionaction.h"
 #include <QQmlContext>
 
 int main(int argc, char *argv[])
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
     GestionRoboclaw roboclaw;
     GestionEtape gestEtape;
     GestionStrategie gestStrat;
+    GestionAction gestAction;
     QQuickView viewer;
 
     // The following are needed to make examples run without having to install the module
@@ -64,6 +66,7 @@ int main(int argc, char *argv[])
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);
     viewer.engine()->rootContext()->setContextProperty("gestEtape", &gestEtape);
     viewer.engine()->rootContext()->setContextProperty("gestStrat", &gestStrat);
+    viewer.engine()->rootContext()->setContextProperty("gestAction", &gestAction);
     viewer.engine()->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
     viewer.setSource(QUrl("qrc:/main.qml"));
     viewer.setResizeMode(QQuickView::SizeRootObjectToView);

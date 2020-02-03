@@ -68,36 +68,42 @@ Item {
                     mainPageEditionStrat.visible=true
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = false
                     break;
                 case 1:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=true
                     mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = false
                     break;
                 case 2:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = true
                     break;
                 case 3:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=true
+                    mainPageCreationSequence.visible = false
                     break;
                 case 4:
                     mainPageRoboclaw.visible=true
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = false
                     break;
                 case 5:
                     mainPageRoboclaw.visible=false
                     mainPageEditionStrat.visible=false
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = false
                     break;
                 }
             }
@@ -144,6 +150,21 @@ Item {
             anchors.bottom: parent.bottom
             anchors.top: parent.top
             anchors.leftMargin: 0
+        }
+
+        MainPageCreationSequence {
+            id: mainPageCreationSequence
+            visible: false
+
+            anchors.left: choixOngletSide.right
+            anchors.leftMargin: 0
+
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
         }
 
     }

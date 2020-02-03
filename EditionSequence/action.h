@@ -3,6 +3,10 @@
 
 #include <QQuickItem>
 #include <QList>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 typedef struct alias
 {
@@ -48,6 +52,11 @@ public slots:
     QString getNomAlias(int indiceParam, int indiceAlias);
     void setValueAlias(int indiceParam, int indiceAlias, QString value);
     QString getValueAlias(int indiceParam, int indiceAlias);
+
+    void save();
+    QJsonObject saveAction();
+    void loadAction(QJsonObject json);
+    void clearAlias(int indiceParam);
 
 signals:
     void nomActionChanged();

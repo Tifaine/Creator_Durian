@@ -9,5 +9,10 @@
         <file>EditionStrategie/MainPageEditionStrat.qml</file>
         <file>EditionStrategie/EditeurEtape.qml</file>
         <file>EditionSequence/PageCreationAction.qml</file>
+        <file>EditionSequence/Components/PannelAction.qml</file>
+        <file>EditionSequence/MainPageCreationSequence.qml</file>
+        <file>EditionSequence/Components/PageBoutons.qml</file>
+        <file>EditionSequence/Components/BlocAction.qml</file>
+        <file>EditionSequence/Components/Sequence.qml</file>
     </qresource>
 </RCC>

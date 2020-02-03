@@ -159,7 +159,6 @@ QJsonObject Etape::saveEtape()
     saveObject["sequenceName"] = nameSequence;
     saveObject["xEtape"] = x;
     saveObject["yEtape"] = y;
-    qDebug()<<x<<" "<<y;
 
     QJsonArray array_Taux;
     QString param("param");

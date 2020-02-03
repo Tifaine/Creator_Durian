@@ -17,12 +17,38 @@ Item {
         listAction.clear()
         listAlias.clear()
         listParam.clear()
+
+        gestAction.updateAction()
+    }
+
+    Connections
+    {
+        target:gestAction
+        onNouvelleAction:
+        {
+            listAction.append({_nom:name, index:listAction.count, _color:"#00ffffff", isBlocante:isBlocante})
+        }
+        onAddParam:
+        {
+            actionEnCours.addParam();
+            actionEnCours.setNomParam(actionEnCours.getNbParam()-1, name);
+            actionEnCours.setValueDefaultParam(actionEnCours.getNbParam()-1, defaultValue);
+            updateParam(actionEnCours)
+        }
+        onAddAlias:
+        {
+            actionEnCours.addAlias(indiceParam)
+            actionEnCours.setNomAlias(indiceParam, indiceAlias, name)
+            actionEnCours.setValueAlias(indiceParam, indiceAlias, value)
+            indiceParamEnCours = indiceParam
+            updateAlias()
+        }
     }
 
     ListModel
     {
         id:listAction
-        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"}
+        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"; isBlocante: 0}
     }
 
     Flickable
@@ -89,6 +115,12 @@ Item {
                     {
                         id:action
                         nomAction: _nom
+                        isActionBlocante: isBlocante
+                        Component.onCompleted:
+                        {
+                            gestAction.addAction(action)
+                            actionEnCours = action
+                        }
                     }
 
                     Rectangle
@@ -113,8 +145,6 @@ Item {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         }
 
-
-
                         MouseArea
                         {
                             anchors.fill: parent
@@ -130,6 +160,7 @@ Item {
                                 indiceParamEnCours = -1
                                 actionEnCours = action
                                 updateParam(action)
+                                tfNomAction.text = action.nomAction
 
                             }
                         }
@@ -226,6 +257,7 @@ Item {
         anchors.leftMargin: 60
         anchors.top: rectangleHaut.bottom
         anchors.topMargin: 10
+        checked: actionEnCours !== 0?actionEnCours.isActionBlocante:false
         onCheckedChanged:
         {
             if(actionEnCours !== 0)
@@ -411,24 +443,27 @@ Item {
     }
 
     Button {
-        id: buttonClearAction
-        width: 150
-        text: qsTr("Clear action")
-        visible: false
-        anchors.top: rectangleHaut.bottom
-        anchors.topMargin: 25
-        anchors.left: rectangleMilieu.right
-        anchors.leftMargin: 25
-    }
-
-    Button {
         id: buttonSaveAction
         y: 126
         width: 150
         text: qsTr("Sauvegarder action")
         visible: false
-        anchors.left: buttonClearAction.right
-        anchors.leftMargin: 35
+        anchors.left: rectangleMilieu.right
+        anchors.leftMargin: 210
+        onClicked:
+        {
+            if(actionEnCours !== 0)
+            {
+                actionEnCours : 0
+                indiceParamEnCours: -1
+                actionEnCours.save()
+                listAction.clear()
+                listAlias.clear()
+                listParam.clear()
+                gestAction.updateAction()
+                element.state = "état de base"
+            }
+        }
     }
 
     Button {
@@ -460,6 +495,14 @@ Item {
         anchors.rightMargin: 25
         anchors.top: rectangleHaut.bottom
         anchors.topMargin: 25
+        onClicked:
+        {
+            if(actionEnCours !== 0)
+            {
+                actionEnCours.clearAlias(indiceParamEnCours)
+                updateAlias()
+            }
+        }
     }
 
     Text {
@@ -470,7 +513,7 @@ Item {
         font.bold: true
         anchors.left: rectangleMilieu.right
         anchors.leftMargin: 5
-        anchors.top: buttonClearAction.bottom
+        anchors.top: buttonclearAlias.bottom
         anchors.topMargin: 5
         font.pixelSize: 12
     }
@@ -828,11 +871,6 @@ Item {
             }
 
             PropertyChanges {
-                target: buttonClearAction
-                visible: true
-            }
-
-            PropertyChanges {
                 target: buttonSaveAction
                 visible: true
             }
@@ -905,8 +943,8 @@ Designer {
     D{i:14;anchors_x:30;anchors_y:115}D{i:15;anchors_x:140;anchors_y:116}D{i:17;anchors_height:200;anchors_width:200;anchors_x:508;anchors_y:300}
 D{i:19;anchors_y:108}D{i:18;anchors_x:329;anchors_y:108}D{i:20;anchors_y:108}D{i:21;anchors_height:100}
 D{i:31;anchors_x:507;anchors_y:164}D{i:27;anchors_x:507;anchors_y:164}D{i:26;anchors_x:65;anchors_y:164}
-D{i:34;anchors_x:779;anchors_y:126}D{i:35;anchors_x:967}D{i:36;anchors_width:150;anchors_x:1152}
-D{i:37;anchors_y:116}D{i:38;anchors_x:756;anchors_y:172}D{i:47;anchors_width:200;anchors_x:1090;anchors_y:529}
-D{i:48;anchors_x:761;anchors_y:253}D{i:49;anchors_x:1462;anchors_y:269}D{i:61;anchors_y:8}
+D{i:34;anchors_x:967}D{i:35;anchors_width:150;anchors_x:1152}D{i:36;anchors_y:116}
+D{i:37;anchors_x:756;anchors_y:172}D{i:46;anchors_width:200;anchors_x:1090;anchors_y:529}
+D{i:47;anchors_x:761;anchors_y:253}D{i:48;anchors_x:1462;anchors_y:269}D{i:60;anchors_y:8}
 }
 ##^##*/

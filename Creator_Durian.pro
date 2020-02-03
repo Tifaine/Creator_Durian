@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         ControleRoboclaw/gestionroboclaw.cpp \
         EditionSequence/action.cpp \
+        EditionSequence/gestionaction.cpp \
         EditionStrategie/etape.cpp \
         EditionStrategie/gestionetape.cpp \
         EditionStrategie/gestionstrategie.cpp \
@@ -44,6 +45,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     ControleRoboclaw/gestionroboclaw.h \
     EditionSequence/action.h \
+    EditionSequence/gestionaction.h \
     EditionStrategie/etape.h \
     EditionStrategie/gestionetape.h \
     EditionStrategie/gestionstrategie.h \
