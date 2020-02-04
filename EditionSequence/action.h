@@ -62,7 +62,7 @@ signals:
     void nomActionChanged();
     void isActionBlocanteChanged();
 
-private:
+protected:
     QString nomAction;
     bool isActionBlocante;
     QList<param* > listParam;

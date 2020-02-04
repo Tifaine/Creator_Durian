@@ -2,20 +2,40 @@ import QtQuick 2.12
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
+import gestionSequence 1.0
 
 Item {
 
-    function addAction()
+    function addAction(index)
     {
-        listAction.append({_nom:"boop", index:listAction.count, _color:"#00ffffff"})
+        listAction.append({_indiceAction:index, index:listAction.count, _color:"#00ffffff"})
+    }
+
+    function save(nomfile)
+    {
+        gestSequence.save(nomfile)
     }
 
     ListModel
     {
         id:listAction
-        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"}
+        ListElement{ _indiceAction:-1 ; index : 0; _color:"#00ffffff"}
     }
 
+    Component.onCompleted:
+    {
+        listAction.clear()
+        gestSequence.clearAction()
+    }
+
+    GestionSequence
+    {
+        id: gestSequence
+    }
+
+    property var sortieClick : -1
+    property var timeoutClick : -1
+    property var entreeClick : -1
     Flickable
     {
         clip:true
@@ -46,6 +66,53 @@ Item {
             color:"transparent"
 
             property int behaviorSelected:-1
+
+            MouseArea
+            {
+                propagateComposedEvents: true
+                anchors.fill: parent
+                hoverEnabled: true
+                onMouseXChanged:
+                {
+                    if(sortieClick !== -1)
+                    {
+                        sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
+                                                        mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
+                    }else if(timeoutClick !== -1)
+                    {
+                        timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather -10),
+                                                          mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
+                    }
+                }
+                onMouseYChanged:
+                {
+                    if(sortieClick !== -1)
+                    {
+                        sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
+                                                        mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
+                    }else if(timeoutClick !== -1)
+                    {
+                        timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather - 10),
+                                                          mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
+                    }
+                }
+
+                onClicked:
+                {
+                    if(sortieClick !== -1)
+                    {
+                        sortieClick.moveConnectorFather(0,0)
+                    }else if(timeoutClick !== -1)
+                    {
+                        timeoutClick.moveConnectorTimeout(0,0)
+                    }
+                    entreeClick = -1
+                    sortieClick = -1
+                    timeoutClick = -1
+                }
+            }
+
+
             Repeater
             {
                 id:repeaterListAction
@@ -53,7 +120,45 @@ Item {
                 anchors.fill: parent
                 BlocAction
                 {
+                    id:act
+                    Component.onCompleted:
+                    {
+                        init(_indiceAction)
+                        gestSequence.addAction(act.action)
+                    }
+                    onEntreeClicked:
+                    {
+                        if(sortieClick !== -1)
+                        {
+                            if(sortieClick.addGirlToFather(action) === true)
+                            {
+                                sortieClick.parent.addAFather()
+                            }
+                            action.addFatherToGirl(sortieClick)
+                        }else if(timeoutClick !== -1)
+                        {
+                            if(timeoutClick.addGirlToTimeout(action) === true)
+                            {
+                                timeoutClick.parent.addATimeOut()
+                            }
+                            action.addFatherToGirl(timeoutClick)
 
+                        }
+
+                        sortieClick = -1
+                        timeoutClick = -1
+
+                    }
+                    onSortieClicked:
+                    {
+                        sortieClick = action
+                        timeoutClick = -1
+                    }
+                    onTimeOutClicked:
+                    {
+                        sortieClick = -1
+                        timeoutClick = action
+                    }
                 }
             }
         }

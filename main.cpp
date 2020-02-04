@@ -37,7 +37,10 @@
 #include "EditionStrategie/gestionetape.h"
 #include "EditionStrategie/gestionstrategie.h"
 #include "EditionSequence/action.h"
+#include "EditionSequence/editableaction.h"
 #include "EditionSequence/gestionaction.h"
+#include "EditionSequence/gestionsequence.h"
+#include "EditionSequence/Components/connector.h"
 #include <QQmlContext>
 
 int main(int argc, char *argv[])
@@ -61,6 +64,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Etape>("etape", 1, 0, "Etape");
     qmlRegisterType<Action>("action", 1, 0, "Action");
+    qmlRegisterType<EditableAction>("editableAction", 1, 0, "EditableAction");
+    qmlRegisterType<Connector>("connector", 1, 0, "Connector");
+    qmlRegisterType<GestionSequence>("gestionSequence", 1, 0, "GestionSequence");
 
     viewer.setTitle(QStringLiteral("Creator Durian"));
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);

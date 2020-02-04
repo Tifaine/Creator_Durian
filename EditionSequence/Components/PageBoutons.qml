@@ -6,6 +6,7 @@ Item {
     width:1350
     height:30
     signal addSequence()
+    signal save(string nomFile)
 
     Button {
         id: buttonSave
@@ -19,6 +20,10 @@ Item {
         anchors.topMargin: 2
         anchors.right: parent.right
         anchors.rightMargin: 5
+        onClicked:
+        {
+            save("Essai")
+        }
     }
 
     Button {

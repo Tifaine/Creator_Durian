@@ -2,6 +2,9 @@ import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import "Components"
+
+import action 1.0
+
 Item {
     id: element
     width: 1500
@@ -15,7 +18,8 @@ Item {
         anchors.bottomMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
-        onCreerAction:sequenceEnCours.addAction()
+        onCreerAction:sequenceEnCours.addAction(indiceAction)
+
     }
 
     PageBoutons {
@@ -26,6 +30,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 0
         onAddSequence:listOnglet.append({"_nom":"new"})
+        onSave:sequenceEnCours.save(nomFile)
 
     }
 
@@ -56,7 +61,7 @@ Item {
 
             TabButton {
                 text: _nom
-                width: Math.max(100, bar.width / 5)
+                width: Math.max(80, bar.width / 8)
             }
         }
     }

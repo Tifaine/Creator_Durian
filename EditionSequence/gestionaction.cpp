@@ -12,12 +12,14 @@ void GestionAction::addAction(Action* action)
 
 void GestionAction::updateAction()
 {
+
     QDir dir("data/Sequence/Action");
     QStringList filters;
     filters << "*.json";
     dir.setNameFilters(filters);
     QFileInfoList list = dir.entryInfoList();
     listAction.clear();
+    init();
     for (int i = 0 ; i < list.size() ; i++)
     {
         Action * action = new Action;
@@ -59,4 +61,53 @@ int GestionAction::getNbAction()
 QString GestionAction::getNameAction(int indice)
 {
     return listAction.at(indice)->getNomAction();
+}
+
+int GestionAction::getNbParameter(int indiceAction)
+{
+    return listAction.at(indiceAction)->getNbParam();
+}
+
+QString GestionAction::getNomParam(int indiceAction, int indiceParam)
+{
+    return listAction.at(indiceAction)->getNomParam(indiceParam);
+}
+
+QString GestionAction::getDefaultValueParam(int indiceAction, int indiceParam)
+{
+    return listAction.at(indiceAction)->getValueDefaultParam(indiceParam);
+}
+
+int GestionAction::getIsActionBlocante(int indice)
+{
+    return listAction.at(indice)->getIsActionBlocante();
+}
+
+int GestionAction::getNbAlias(int indiceAction, int indiceParam)
+{
+    return listAction.at(indiceAction)->getnbAlias(indiceParam);
+}
+
+QString GestionAction::getNomAlias(int indiceAction, int indiceParam, int indiceAlias)
+{
+    return listAction.at(indiceAction)->getNomAlias(indiceParam, indiceAlias);
+}
+
+QString GestionAction::getValueAlias(int indiceAction, int indiceParam, int indiceAlias)
+{
+    return listAction.at(indiceAction)->getValueAlias(indiceParam, indiceAlias);
+}
+
+Action* GestionAction::getAction(int indice)
+{
+    return listAction.at(indice);
+}
+
+void GestionAction::init()
+{
+    //Création des actions de base
+    emit nouvelleAction("Départ", false);
+    emit nouvelleAction("Fin", false);
+    emit nouvelleAction("Séquence", false);
+    emit addParam("Nom", "init");
 }
