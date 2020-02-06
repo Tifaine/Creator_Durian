@@ -176,6 +176,21 @@ void EditableAction::setYEntree(int value)
     yEntree = value;
 }
 
+QList<EditableAction *> EditableAction::getListTimeOut() const
+{
+    return listTimeOut;
+}
+
+QList<EditableAction *> EditableAction::getListFille() const
+{
+    return listFille;
+}
+
+QList<EditableAction *> EditableAction::getListPere() const
+{
+    return listPere;
+}
+
 int EditableAction::getXEntree() const
 {
     return xEntree;

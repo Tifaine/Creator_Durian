@@ -31,6 +31,7 @@ Item {
         anchors.topMargin: 0
         onAddSequence:listOnglet.append({"_nom":"new"})
         onSave:sequenceEnCours.save(nomFile)
+        onOpen:sequenceEnCours.open(nomFile)
 
     }
 

@@ -23,6 +23,13 @@ public:
     EditableAction();
     void daughterIsMoving(EditableAction * act);
     QJsonObject saveAction();
+
+    QList<EditableAction *> getListPere() const;
+
+    QList<EditableAction *> getListFille() const;
+
+    QList<EditableAction *> getListTimeOut() const;
+
 public slots:
     int getXBloc() const;
     void setXBloc(int value);

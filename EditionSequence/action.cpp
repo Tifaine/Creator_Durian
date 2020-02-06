@@ -53,7 +53,8 @@ QString Action::getNomParam(int indiceParam)
 
 void Action::setValueDefaultParam(int indiceParam, QString valueDefault)
 {
-    listParam.at(indiceParam)->valueParam = valueDefault;
+    if(indiceParam < listParam.size())
+        listParam.at(indiceParam)->valueParam = valueDefault;
 }
 
 QString Action::getValueDefaultParam(int indiceParam)
@@ -195,5 +196,5 @@ void Action::loadAction(QJsonObject json)
 
 void Action::clearAlias(int indiceParam)
 {
-        listParam.at(indiceParam)->listAlias.clear();
+    listParam.at(indiceParam)->listAlias.clear();
 }

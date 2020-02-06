@@ -215,7 +215,7 @@ Item {
                     }
                     onTextChanged:
                     {
-                        //editableAction.modifierValue(_nom,text)
+                        editAction.setValueDefaultParam(index, text)
                     }
                 }
 

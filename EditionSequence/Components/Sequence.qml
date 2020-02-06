@@ -16,6 +16,16 @@ Item {
         gestSequence.save(nomfile)
     }
 
+    function open(nomFile)
+    {
+        listAction.clear()
+        gestSequence.clearAction()
+        sortieClick = -1
+        timeoutClick = -1
+        entreeClick = -1
+        gestSequence.open(nomFile)
+    }
+
     ListModel
     {
         id:listAction
