@@ -8,7 +8,7 @@ Item {
 
     function addAction(index)
     {
-        listAction.append({_indiceAction:index, index:listAction.count, _color:"#00ffffff"})
+        listAction.append({_indiceAction:index, index:listAction.count, _color:"#00ffffff", _x:flickable.contentX, _y:flickable.contentY})
     }
 
     function save(nomfile)
@@ -29,7 +29,7 @@ Item {
     ListModel
     {
         id:listAction
-        ListElement{ _indiceAction:-1 ; index : 0; _color:"#00ffffff"}
+        ListElement{ _indiceAction:-1 ; index : 0; _color:"#00ffffff"; _x : 0; _y : 0}
     }
 
     Component.onCompleted:
@@ -41,17 +41,41 @@ Item {
     GestionSequence
     {
         id: gestSequence
+        onCreateNewAction:
+        {
+            listAction.append({_indiceAction:gestAction.getIndiceByName(nomAction), index:listAction.count, _color:"#00ffffff", _x:xBloc, _y:yBloc})
+        }
+        onUpdateParam:
+        {
+            if(lastActionCreate !== -1)
+            {
+                lastActionCreate.updateParam(indiceParam, value)
+            }
+        }
+        onAjoutFille:
+        {
+            repeaterListAction.itemAt(indicePere).action.addGirlToFather(repeaterListAction.itemAt(indiceFille).action)
+            repeaterListAction.itemAt(indicePere).addAFather();
+            repeaterListAction.itemAt(indiceFille).action.addFatherToGirl(repeaterListAction.itemAt(indicePere).action)
+        }
+        onAjoutTimeout:
+        {
+            repeaterListAction.itemAt(indicePere).action.addGirlToTimeout(repeaterListAction.itemAt(indiceTimeout).action)
+            repeaterListAction.itemAt(indicePere).addATimeOut();
+            repeaterListAction.itemAt(indiceTimeout).action.addFatherToGirl(repeaterListAction.itemAt(indicePere).action)
+        }
+
     }
 
     property var sortieClick : -1
     property var timeoutClick : -1
     property var entreeClick : -1
+    property var lastActionCreate : -1
     Flickable
     {
         clip:true
         id: flickable
         flickableDirection: Flickable.HorizontalAndVerticalFlick
-        //flickableDirection: Flickable.
         anchors.fill: parent
         contentWidth: 15000; contentHeight: 15000
         contentX: 0
@@ -131,10 +155,13 @@ Item {
                 BlocAction
                 {
                     id:act
+                    x: _x
+                    y: _y
                     Component.onCompleted:
                     {
                         init(_indiceAction)
                         gestSequence.addAction(act.action)
+                        lastActionCreate = act
                     }
                     onEntreeClicked:
                     {

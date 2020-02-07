@@ -31,7 +31,11 @@ Item {
         anchors.topMargin: 0
         onAddSequence:listOnglet.append({"_nom":"new"})
         onSave:sequenceEnCours.save(nomFile)
-        onOpen:sequenceEnCours.open(nomFile)
+        onOpen:
+        {
+            listOnglet.set(stackLayout.currentIndex,{ "_nom": nomFile})
+            sequenceEnCours.open(nomFile)
+        }
 
     }
 
@@ -52,6 +56,7 @@ Item {
         anchors.top: pageBoutons.bottom
         anchors.topMargin: 1
         clip:true
+
         background: Rectangle{
             anchors.fill: parent
             color:"transparent"
@@ -63,12 +68,14 @@ Item {
             TabButton {
                 text: _nom
                 width: Math.max(80, bar.width / 8)
+
             }
         }
     }
 
     property var sequenceEnCours : -1
     StackLayout {
+        id:stackLayout
         anchors.leftMargin: 1
         anchors.top: bar.bottom
         anchors.right: parent.right
@@ -76,8 +83,10 @@ Item {
         anchors.left: pannelAction.right
         anchors.topMargin: 1
         currentIndex: bar.currentIndex
+        onCurrentIndexChanged: sequenceEnCours = repeaterOnglet.itemAt(currentIndex)
 
         Repeater {
+            id:repeaterOnglet
             model: listOnglet
 
             Sequence {

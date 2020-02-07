@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import etape 1.0
+import Qt.labs.folderlistmodel 2.12
 
 Item {
     id: element
@@ -141,15 +142,14 @@ Item {
                                 textFieldDeadline.text = step.deadline
                                 rectangleColor.color = step.color
                                 controlSequence.currentIndex = 0;
-                                for(var i = 0; i < cbmodel.count; i++)
+                                for(var i = 0; i < folderModel.count; i++)
                                 {
-                                    if(cbmodel.get(i).text === step.nameSequence)
+                                    if(folderModel.get(i, "fileName") === step.nameSequence)
                                     {
                                         controlSequence.currentIndex = i;
                                         break;
                                     }
                                 }
-
                                 etapeEnCours = index
                             }
                         }
@@ -488,12 +488,14 @@ Item {
 
     }
 
-    ListModel {
-        id: cbmodel
-        ListElement { text: "-" }
-        ListElement { text: "Banana" }
-        ListElement { text: "Apple" }
-        ListElement { text: "Coconut" }
+
+
+    FolderListModel
+    {
+        id: folderModel
+        folder:"file:///"+applicationDirPath+"/data/Sequence/"
+        nameFilters: ["*.json"]
+        showDirs: false
     }
 
     ComboBox {
@@ -504,22 +506,20 @@ Item {
         anchors.rightMargin: 270
         anchors.top: buttonColor.bottom
         anchors.topMargin: 70
-        model: cbmodel
+        model: folderModel
         currentIndex: 0
-
-
-        onCurrentTextChanged:
+        onCurrentIndexChanged:
         {
             if(etapeEnCours !== -1)
             {
-                gestEtape.getEtape(etapeEnCours).nameSequence = currentText
+                gestEtape.getEtape(etapeEnCours).nameSequence = folderModel.get(currentIndex, "fileName")
             }
         }
 
         delegate: ItemDelegate {
             width: controlSequence.width
             contentItem: Text {
-                text: modelData
+                text: fileName
                 color: "white"
                 font: controlSequence.font
                 elide: Text.ElideRight
@@ -561,7 +561,7 @@ Item {
             leftPadding: 10
             rightPadding: controlSequence.indicator.width + controlSequence.spacing
 
-            text: controlSequence.displayText
+            text: folderModel.get(controlSequence.currentIndex, "fileName")
             font: controlSequence.font
             color: "white"
             verticalAlignment: Text.AlignVCenter

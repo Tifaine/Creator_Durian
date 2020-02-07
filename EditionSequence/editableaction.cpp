@@ -5,6 +5,67 @@ EditableAction::EditableAction()
 
 }
 
+void EditableAction::open1(QJsonObject json)
+{
+    if(json.contains("nomAction") )
+    {
+        setNomAction(json["nomAction"].toString());
+    }
+    if(json.contains("xBloc") )
+    {
+        setXBloc(json["xBloc"].toInt());
+    }
+    if(json.contains("yBloc") )
+    {
+        setYBloc(json["yBloc"].toInt());
+    }
+    if(json.contains("arrayParam") )
+    {
+        QJsonArray array = json["arrayParam"].toArray();
+        foreach (const QJsonValue & v, array)
+        {
+            addParam();
+            QJsonObject obj = v.toObject();
+            if(obj.contains("nomParam") )
+            {
+                setNomParam(getNbParam()-1, obj["nomParam"].toString());
+            }
+            if(obj.contains("defaultValue") )
+            {
+                setValueDefaultParam(getNbParam()-1, obj["defaultValue"].toString());
+            }
+        }
+    }
+}
+
+void EditableAction::open2(QJsonObject json)
+{
+    if(json.contains("arrayGirl") )
+    {
+        QJsonArray array = json["arrayGirl"].toArray();
+        foreach (const QJsonValue & v, array)
+        {
+            QJsonObject obj = v.toObject();
+            if(obj.contains("indiceFille") )
+            {
+                listIndiceFille.append(obj["indiceFille"].toInt());
+            }
+        }
+    }
+    if(json.contains("arrayTimeout") )
+    {
+        QJsonArray array = json["arrayTimeout"].toArray();
+        foreach (const QJsonValue & v, array)
+        {
+            QJsonObject obj = v.toObject();
+            if(obj.contains("indiceTimeout") )
+            {
+                listIndiceTimeout.append(obj["indiceTimeout"].toInt());
+            }
+        }
+    }
+}
+
 void EditableAction::daughterIsMoving(EditableAction * act)
 {
     if(listFille.contains(act))
@@ -24,6 +85,7 @@ QJsonObject EditableAction::saveAction()
     QJsonObject saveObject;
     saveObject["nomAction"] = nomAction;
     saveObject["blocante"] = isActionBlocante;
+
 
     QJsonArray arrayParam;
     QString nomParam("nomParam");
@@ -189,6 +251,26 @@ QList<EditableAction *> EditableAction::getListFille() const
 QList<EditableAction *> EditableAction::getListPere() const
 {
     return listPere;
+}
+
+int EditableAction::getNbfille()
+{
+    return listIndiceFille.size();
+}
+
+int EditableAction::getNbTimeout()
+{
+    return listIndiceTimeout.size();
+}
+
+int EditableAction::getIndicefille(int indice)
+{
+    return listIndiceFille.at(indice);
+}
+
+int EditableAction::getIndiceTimeout(int indice)
+{
+    return listIndiceTimeout.at(indice);
 }
 
 int EditableAction::getXEntree() const

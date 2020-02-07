@@ -18,6 +18,10 @@ public slots:
     void clearAction();
 
 signals:
+    void createNewAction(QString nomAction, int xBloc, int yBloc);
+    void updateParam(int indiceParam, QString value);
+    void ajoutFille(int indicePere, int indiceFille);
+    void ajoutTimeout(int indicePere, int indiceTimeout);
 
 private:
     QList<EditableAction* > listAction;

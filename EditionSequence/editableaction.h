@@ -21,6 +21,9 @@ class EditableAction : public Action
 
 public:
     EditableAction();
+
+    void open1(QJsonObject json);
+    void open2(QJsonObject json);
     void daughterIsMoving(EditableAction * act);
     QJsonObject saveAction();
 
@@ -30,7 +33,14 @@ public:
 
     QList<EditableAction *> getListTimeOut() const;
 
+    int getNbfille();
+    int getNbTimeout();
+    int getIndicefille(int indice);
+    int getIndiceTimeout(int indice);
+
 public slots:
+
+
     int getXBloc() const;
     void setXBloc(int value);
 
@@ -99,6 +109,10 @@ private:
 
     QList<Connector* > listConnectorPere;
     QList<Connector* > listConnectorTimeout;
+
+
+    QList<int> listIndiceFille;
+    QList<int> listIndiceTimeout;
 };
 
 #endif // EDITABLEACTION_H

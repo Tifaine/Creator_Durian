@@ -29,6 +29,11 @@ Item {
         listConnectorFather.append({_xB:0, _yB:0, color:"steelblue"})
     }
 
+    function updateParam(indiceParam, value)
+    {
+        listParam.set(indiceParam, {"value": value})
+    }
+
     MouseArea
     {
         anchors.fill: parent
@@ -235,10 +240,6 @@ Item {
                     for (var i = 0; i < gestAction.getNbAlias(indiceAct, indicePar); i++)
                     {
                         listAlias.append({_nom:gestAction.getNomAlias(indiceAct, indicePar, i), value:gestAction.getValueAlias(indiceAct, indicePar, i)})
-                    }
-                    if(gestAction.getNbAlias(indiceAct, indicePar) > 0)
-                    {
-                        controlAlias.currentIndex = 0
                     }
                 }
 

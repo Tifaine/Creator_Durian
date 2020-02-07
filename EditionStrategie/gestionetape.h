@@ -22,7 +22,6 @@ public slots:
 
     void toPrint();
     void updateEtape();
-
 signals:
     void stepUpdated();
 

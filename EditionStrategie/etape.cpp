@@ -156,6 +156,7 @@ QJsonObject Etape::saveEtape()
     saveObject["dateMax"] = dateMax;
     saveObject["deadline"] = deadline;
     saveObject["color"] = color;
+    qDebug()<<nameSequence;
     saveObject["sequenceName"] = nameSequence;
     saveObject["xEtape"] = x;
     saveObject["yEtape"] = y;

@@ -98,6 +98,18 @@ QString GestionAction::getValueAlias(int indiceAction, int indiceParam, int indi
     return listAction.at(indiceAction)->getValueAlias(indiceParam, indiceAlias);
 }
 
+int GestionAction::getIndiceByName(QString name)
+{
+    for(int i = 0; i<listAction.size(); i++)
+    {
+        if(listAction.at(i)->getNomAction() == name)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 Action* GestionAction::getAction(int indice)
 {
     return listAction.at(indice);
@@ -111,3 +123,5 @@ void GestionAction::init()
     emit nouvelleAction("Séquence", false);
     emit addParam("Nom", "init");
 }
+
+

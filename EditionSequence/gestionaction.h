@@ -26,6 +26,7 @@ public slots:
     QString getNomAlias(int indiceAction, int indiceParam, int indiceAlias);
     QString getValueAlias(int indiceAction, int indiceParam, int indiceAlias);
     Action* getAction(int indice);
+    int getIndiceByName(QString name);
 
 signals:
     void nouvelleAction(QString name, int isBlocante);

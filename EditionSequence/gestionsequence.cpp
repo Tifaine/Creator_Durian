@@ -69,6 +69,8 @@ void GestionSequence::save(QString nomFile)
             saveObject["arrayParam"] = arrayParam;
             saveObject["blocante"] = item->getIsActionBlocante();
             saveObject["indice"] = listAction.indexOf(item);
+            saveObject["xBloc"] = item->getXBloc();
+            saveObject["yBloc"] = item->getYBloc();
             saveObject["nomAction"] = item->getNomAction();
             arraySequence.push_back(QJsonValue(saveObject));
         }
@@ -81,7 +83,48 @@ void GestionSequence::save(QString nomFile)
 
 void GestionSequence::open(QString nomFile)
 {
-    qDebug()<<nomFile;
+    QFile loadFile("data/Sequence/"+nomFile);
+    if(!loadFile.open(QIODevice::ReadOnly))
+    {
+        qDebug()<<"Failed !";
+    }else
+    {
+        QByteArray saveData = loadFile.readAll();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        QJsonObject json = loadDoc.object();
+        if(json.contains("sequence"))
+        {
+            if( json["sequence"].isArray())
+            {
+                QJsonArray array = json["sequence"].toArray();
+                foreach (const QJsonValue & v, array)
+                {
+                    EditableAction foo;
+                    foo.open1(v.toObject());
+                    emit createNewAction(foo.getNomAction(), foo.getXBloc(), foo.getYBloc());
+                    for(int i = 0; i < foo.getNbParam(); i++)
+                    {
+                        emit updateParam(i, foo.getValueDefaultParam(i));
+                    }
+                }
+                int indice = 0;
+                foreach (const QJsonValue & v, array)
+                {
+                    EditableAction foo;
+                    foo.open2(v.toObject());
+                    for(int i = 0; i < foo.getNbfille(); i++)
+                    {
+                        emit ajoutFille(indice, foo.getIndicefille(i));
+                    }
+                    for(int i = 0; i < foo.getNbTimeout(); i++)
+                    {
+                        emit ajoutTimeout(indice, foo.getIndiceTimeout(i));
+                    }
+                    indice++;
+                }
+            }
+        }
+    }
 }
 
 void GestionSequence::clearAction()
