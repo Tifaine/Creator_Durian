@@ -166,20 +166,6 @@ Item {
     }
 
     Button {
-        id: buttonExport
-        x: 759
-        width: 200
-        text: qsTr("Exporter vers le robot")
-        font.pointSize: 9
-        anchors.right: buttonLoad.left
-        anchors.rightMargin: 50
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 2
-        anchors.top: parent.top
-        anchors.topMargin: 2
-    }
-
-    Button {
         id: buttonNew
         width: 200
         text: qsTr("Nouvelle séquence")

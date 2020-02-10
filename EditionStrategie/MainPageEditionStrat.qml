@@ -1231,6 +1231,21 @@ Item {
         }
     }
 
+    Button {
+        id: buttonExport
+        x: 1396
+        y: 7
+        text: qsTr("Exporter")
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.top: buttonLoad.bottom
+        anchors.topMargin: 5
+        onClicked:
+        {
+            gestStrat.exportStrat()
+        }
+    }
+
 
     states: [
         State {

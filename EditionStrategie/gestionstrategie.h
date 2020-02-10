@@ -22,6 +22,7 @@ public slots:
     int getNbStrat();
     QString getNameStrat(int indice);
     void openStrat(QString nomStrat);
+    void exportStrat();
     int getNbEtape();
 
 
@@ -32,6 +33,7 @@ signals:
 private:
     QList <Etape *> listEtape;
     QList <QString> listStrat;
+    void exportSequence(QString filename, QJsonArray* saveObjectEtape, int nbSequence, int* nbSequenceToReturn, int numeroSequence, QJsonArray* arrayFilleParent);
 
 };
 

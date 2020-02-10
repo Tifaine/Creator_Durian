@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 import editableAction 1.0
+import Qt.labs.folderlistmodel 2.12
 import connector 1.0
 
 Item {
@@ -31,6 +32,7 @@ Item {
 
     function updateParam(indiceParam, value)
     {
+        console.log("update : ",value)
         listParam.set(indiceParam, {"value": value})
     }
 
@@ -38,7 +40,7 @@ Item {
     {
         anchors.fill: parent
         drag.target: element;
-        propagateComposedEvents:true        
+        propagateComposedEvents:true
     }
 
     EditableAction
@@ -51,7 +53,7 @@ Item {
         xTimeOut : bloctimeOut.x + bloctimeOut.width/2
         yTimeOut : bloctimeOut.y + bloctimeOut.width/2
         xEntree : blocEntree.x + blocEntree.width/2
-        yEntree : blocEntree.y + blocEntree.width/2        
+        yEntree : blocEntree.y + blocEntree.width/2
     }
 
     function init(indiceAction)
@@ -227,20 +229,42 @@ Item {
                 function fillAlias(indiceAct, indicePar)
                 {
                     listAlias.clear()
-                    if(gestAction.getNbAlias(indiceAct, indicePar) > 0)
+                    if(testNom.text === "Sequence")
                     {
                         element.height = element.height + 40
                         rect.height = rect.height + 40
                         textFieldDefaultValue.anchors.top = controlAlias.bottom
+                        controlAlias.model = folderModel
+
                     }else
                     {
-                        controlAlias.visible = false
+
+                        controlAlias.model = listAlias
+                        if(gestAction.getNbAlias(indiceAct, indicePar) > 0)
+                        {
+                            element.height = element.height + 40
+                            rect.height = rect.height + 40
+                            textFieldDefaultValue.anchors.top = controlAlias.bottom
+                        }else
+                        {
+                            controlAlias.visible = false
+                        }
+
+                        for (var i = 0; i < gestAction.getNbAlias(indiceAct, indicePar); i++)
+                        {
+                            listAlias.append({_nom:gestAction.getNomAlias(indiceAct, indicePar, i), value:gestAction.getValueAlias(indiceAct, indicePar, i)})
+                        }
                     }
 
-                    for (var i = 0; i < gestAction.getNbAlias(indiceAct, indicePar); i++)
-                    {
-                        listAlias.append({_nom:gestAction.getNomAlias(indiceAct, indicePar, i), value:gestAction.getValueAlias(indiceAct, indicePar, i)})
-                    }
+
+                }
+
+                FolderListModel
+                {
+                    id: folderModel
+                    folder:"file:///"+applicationDirPath+"/data/Sequence/"
+                    nameFilters: ["*.json"]
+                    showDirs: false
                 }
 
                 ListModel
@@ -259,13 +283,19 @@ Item {
 
                     anchors.top: parent.top
                     anchors.topMargin:2
-                    model: listAlias
                     currentIndex: 0
                     onCurrentIndexChanged:
                     {
-                        if(listAlias.count > currentIndex && currentIndex !== -1)
+                        if(model === listAlias)
                         {
-                            displayText = listAlias.get(currentIndex)._nom
+                            if(listAlias.count > currentIndex && currentIndex !== -1)
+                            {
+                                displayText = listAlias.get(currentIndex)._nom
+                                textFieldDefaultValue.text = displayText
+                            }
+                        }else
+                        {
+                            displayText = folderModel.get(currentIndex, "fileName")
                             textFieldDefaultValue.text = displayText
                         }
                     }
@@ -273,7 +303,7 @@ Item {
                     delegate: ItemDelegate {
                         width: controlAlias.width
                         contentItem: Text {
-                            text: (_nom + "("+value+")")
+                            text: controlAlias.model === listAlias ? (_nom + "("+value+")") : fileName
                             color: "white"
                             font: controlAlias.font
                             elide: Text.ElideRight

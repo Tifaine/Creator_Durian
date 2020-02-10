@@ -120,7 +120,7 @@ void GestionAction::init()
     //Création des actions de base
     emit nouvelleAction("Départ", false);
     emit nouvelleAction("Fin", false);
-    emit nouvelleAction("Séquence", false);
+    emit nouvelleAction("Sequence", false);
     emit addParam("Nom", "init");
 }
 

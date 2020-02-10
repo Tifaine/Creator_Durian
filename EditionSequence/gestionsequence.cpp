@@ -24,8 +24,6 @@ void GestionSequence::save(QString nomFile)
         for(auto item : listAction)
         {
             QJsonObject saveObject;
-
-
             QJsonArray arrayParam;
             QString nomParam("nomParam");
             QString defaultValue("defaultValue");

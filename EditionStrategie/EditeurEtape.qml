@@ -600,12 +600,26 @@ Item {
         }
     }
 
+    Text {
+        id: textSequence
+        x: 138
+        height: 15
+        color: "#ffffff"
+        text: qsTr("Séquence associée : ")
+        anchors.right: controlSequence.left
+        anchors.rightMargin: 10
+        anchors.top: buttonColor.bottom
+        anchors.topMargin: 80
+        font.bold: true
+        font.pixelSize: 12
+    }
+
 
 }
 
 
 /*##^##
 Designer {
-    D{i:38;anchors_y:299}D{i:39;anchors_y:287}D{i:41;anchors_width:120}
+    D{i:38;anchors_y:299}D{i:39;anchors_y:287}D{i:41;anchors_width:120}D{i:54;anchors_width:93;anchors_x:15;anchors_y:410}
 }
 ##^##*/
