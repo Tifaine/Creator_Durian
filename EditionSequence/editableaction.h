@@ -35,12 +35,18 @@ public:
 
     int getNbfille();
     int getNbTimeout();
+
     int getIndicefille(int indice);
     int getIndiceTimeout(int indice);
+    void abandonnerFille(EditableAction * act);
 
 public slots:
 
-
+    void prepareToErase();
+    void abandonnerPere(EditableAction * act);
+    void abandonnerPere(int indice);
+    int getNbPapa();
+    QString getNomPapa(int indice);
     int getXBloc() const;
     void setXBloc(int value);
 
@@ -87,6 +93,9 @@ signals:
     void yTimeoutChanged();
     void xEntreeChanged();
     void yEntreeChanged();
+
+    void eraseAFather();
+    void eraseATimeout();
 
 private:
     int xBloc;

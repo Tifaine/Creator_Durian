@@ -102,6 +102,16 @@ QJsonObject EditableAction::saveAction()
     return saveObject;
 }
 
+int EditableAction::getNbPapa()
+{
+    return listPere.count();
+}
+
+QString EditableAction::getNomPapa(int indice)
+{
+    return listPere.at(indice)->nomAction;
+}
+
 int EditableAction::getXBloc() const
 {
     return xBloc;
@@ -271,6 +281,61 @@ int EditableAction::getIndicefille(int indice)
 int EditableAction::getIndiceTimeout(int indice)
 {
     return listIndiceTimeout.at(indice);
+}
+
+void EditableAction::abandonnerFille(EditableAction * act)
+{
+    if(listFille.contains(act))
+    {
+        listFille.removeOne(act);
+        emit eraseAFather();
+    }
+
+    if(listTimeOut.contains(act))
+    {
+        listTimeOut.removeOne(act);
+        emit eraseATimeout();
+    }
+
+    for(int i = 0; i < listFille.size(); i++)
+    {
+        listConnectorPere.at(i+1)->setX2(listFille.at(i)->getXBloc() + listFille.at(i)->getXEntree() - (getXBloc() + getXFather() - 10));
+        listConnectorPere.at(i+1)->setY2(listFille.at(i)->getYBloc() + listFille.at(i)->getYEntree() - (getYBloc() + getYFather() - 10));
+    }
+    for(int i = 0; i < listTimeOut.size(); i++)
+    {
+        listConnectorTimeout.at(i+1)->setX2(listTimeOut.at(i)->getXBloc() + listTimeOut.at(i)->getXEntree() - (getXBloc() + getXTimeOut() - 10));
+        listConnectorTimeout.at(i+1)->setY2(listTimeOut.at(i)->getYBloc() + listTimeOut.at(i)->getYEntree() - (getYBloc() + getYTimeOut()));
+    }
+
+}
+
+void EditableAction::prepareToErase()
+{
+    for(int i = 0; i < listFille.size(); i++)
+    {
+        listFille.at(i)->abandonnerPere(this);
+    }
+    for(int i = 0 ; i < listPere.size(); i++)
+    {
+        listPere.at(i)->abandonnerFille(this);
+    }
+    for(int i = 0 ; i < listTimeOut.size(); i++)
+    {
+        listTimeOut.at(i)->abandonnerFille(this);
+    }
+
+}
+
+void EditableAction::abandonnerPere(EditableAction * act)
+{
+    listPere.removeOne(act);
+}
+
+void EditableAction::abandonnerPere(int indice)
+{
+    listPere.at(indice)->abandonnerFille(this);
+    listPere.removeAt(indice);
 }
 
 int EditableAction::getXEntree() const

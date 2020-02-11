@@ -40,6 +40,7 @@ Item {
         anchors.fill: parent
         Rectangle
         {
+            id:rectEtape
             property bool stepOk : false
             x: _x
             y: _y
@@ -87,14 +88,34 @@ Item {
                 anchors.fill: parent
                 drag.target: parent;
                 propagateComposedEvents:true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
                 onPressed:
                 {
                     etapeEnCours = step
                     tfX.text = Math.round((step.x + width / 2 - name.x) * 3000 / name.width - 1500)
                     tfY.text = Math.round((step.y + height / 2 - name.y) * 2000 / name.height)
-                    textNomAction.text = "Nom Action : " + step.nameSequence
+                    textNomAction.text = "Nom Action : " + step.nomEtape
+                    textSequence.text = "Nom séquence : " + step.nameSequence
                     updateTaux()
                     element.state="State1"
+                    if(mouse.button === Qt.RightButton)
+                    {
+                        contextMenuDeleteEtape.popup()
+                    }
+                }
+                Menu
+                {
+                    id: contextMenuDeleteEtape
+                    MenuItem
+                    {
+                        text: "Supprimer étape"
+                        onClicked:
+                        {
+                            gestStrat.removeEtape(step);
+                            listEtape.remove(index)
+                            element.state="état de base"
+                        }
+                    }
                 }
             }
 
@@ -117,6 +138,8 @@ Item {
                     gestStrat.addEtape(step)
                     stepOk = true
                 }
+                onXModified: rectEtape.x = x
+                onYModified: rectEtape.y = y
             }
             function addTaux(param, cond, value, ratio)
             {
@@ -1246,6 +1269,19 @@ Item {
         }
     }
 
+    Text {
+        id: textSequence
+        text: qsTr("Nom séquence : ")
+        font.bold: true
+        color: "white"
+        visible: false
+        font.pixelSize: 13
+        anchors.left: name.right
+        anchors.leftMargin: 10
+        anchors.top: tfY.bottom
+        anchors.topMargin: 20
+    }
+
 
     states: [
         State {
@@ -1320,6 +1356,11 @@ Item {
                 target: tfY
                 visible: true
             }
+
+            PropertyChanges {
+                target: textSequence
+                visible: true
+            }
         }
     ]
 }
@@ -1329,6 +1370,6 @@ Designer {
     D{i:19;anchors_height:100;anchors_width:959}D{i:59;anchors_height:15}D{i:58;anchors_height:15}
 D{i:60;anchors_height:15}D{i:63;anchors_x:960;anchors_y:141}D{i:62;anchors_x:993;anchors_y:115}
 D{i:61;anchors_height:15}D{i:64;anchors_x:960;anchors_y:175}D{i:65;anchors_x:987;anchors_y:137}
-D{i:66;anchors_x:991;anchors_y:173}D{i:72;anchors_y:8}D{i:73;anchors_y:60}
+D{i:66;anchors_x:991;anchors_y:173}D{i:72;anchors_y:8}D{i:73;anchors_y:60}D{i:123;anchors_x:1571;anchors_y:290}
 }
 ##^##*/

@@ -2,6 +2,10 @@
 
 GestionSequence::GestionSequence()
 {
+    QDir directory(QCoreApplication::applicationDirPath()+"/data/Sequence/");
+    listSequence = directory.entryList(QStringList() << "*.json" << "*.JSON",QDir::Files);
+    watcher.addPath(QCoreApplication::applicationDirPath()+"/data/Sequence/");
+    connect(&watcher, SIGNAL(directoryChanged(const QString &)), SLOT(onDirectoryChanged(const QString &)));
 
 }
 
@@ -128,4 +132,21 @@ void GestionSequence::open(QString nomFile)
 void GestionSequence::clearAction()
 {
     listAction.clear();
+}
+
+int GestionSequence::getNbSequence()
+{
+    return listSequence.size();
+}
+
+QString GestionSequence::getNomSequence(int indice)
+{
+    return listSequence.at(indice);
+}
+
+void GestionSequence::onDirectoryChanged(const QString &path)
+{
+    QDir directory(QCoreApplication::applicationDirPath()+"/data/Sequence/");
+    listSequence = directory.entryList(QStringList() << "*.json" << "*.JSON",QDir::Files);
+    emit listFilesChanged();
 }

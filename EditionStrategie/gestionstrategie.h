@@ -14,6 +14,7 @@ public:
 
 public slots:
     void addEtape(Etape *);
+    void removeEtape(Etape * etape);
     Etape* getEtape(int);
     Etape* getEtape(Etape *);
     void clearList();

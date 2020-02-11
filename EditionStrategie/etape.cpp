@@ -183,6 +183,10 @@ QJsonObject Etape::saveEtape()
 
 void Etape::loadObject(QJsonObject json)
 {
+    if(json.contains("nomEtape") )
+    {
+        setNomEtape(json["nomEtape"].toString());
+    }
     if(json.contains("nbPoints") )
     {
         setNbPoints(json["nbPoints"].toInt());

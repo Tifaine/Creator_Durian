@@ -65,6 +65,7 @@ Item {
             repeaterListAction.itemAt(indiceTimeout).action.addFatherToGirl(repeaterListAction.itemAt(indicePere).action)
         }
 
+
     }
 
     property var sortieClick : -1
@@ -195,6 +196,15 @@ Item {
                     {
                         sortieClick = -1
                         timeoutClick = action
+                    }
+                    onHaraKiri:
+                    {
+                        for(var i = index+1 ;i < listAction.count; i++)
+                        {
+                            listAction.set(i, {"index": i-1})
+                        }
+
+                        listAction.remove(index)
                     }
                 }
             }

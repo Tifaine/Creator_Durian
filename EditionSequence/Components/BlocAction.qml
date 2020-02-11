@@ -19,6 +19,7 @@ Item {
     signal entreeClicked(var action)
     signal sortieClicked(var action)
     signal timeOutClicked(var action)
+    signal haraKiri();
 
     function addATimeOut()
     {
@@ -30,9 +31,34 @@ Item {
         listConnectorFather.append({_xB:0, _yB:0, color:"steelblue"})
     }
 
+    Connections
+    {
+        target:gestSequence
+        onListFilesChanged:updateListAliasForSequence()
+    }
+
+    function updateListAliasForSequence()
+    {
+        listAlias.clear()
+        for(var i = 0; i < gestSequence.getNbSequence(); i++)
+        {
+            listAlias.append({_nom:"Nom", value:gestSequence.getNomSequence(i)})
+        }
+    }
+
+    ListModel
+    {
+        id:listAlias
+        ListElement{ _nom:"x" ; value:"0"}
+    }
+
     function updateParam(indiceParam, value)
     {
-        console.log("update : ",value)
+        if( testNom.text === "Sequence")
+        {
+
+        }
+
         listParam.set(indiceParam, {"value": value})
     }
 
@@ -41,6 +67,28 @@ Item {
         anchors.fill: parent
         drag.target: element;
         propagateComposedEvents:true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed:
+        {
+
+            if(mouse.button === Qt.RightButton)
+            {
+                contextMenuDeleteAction.popup()
+            }
+        }
+    }
+    Menu
+    {
+        id: contextMenuDeleteAction
+        MenuItem
+        {
+            text: "Supprimer action"
+            onClicked:
+            {
+                editAction.prepareToErase()
+                haraKiri()
+            }
+        }
     }
 
     EditableAction
@@ -54,6 +102,8 @@ Item {
         yTimeOut : bloctimeOut.y + bloctimeOut.width/2
         xEntree : blocEntree.x + blocEntree.width/2
         yEntree : blocEntree.y + blocEntree.width/2
+        onEraseAFather: listConnectorFather.remove(0)
+        onEraseATimeout: listConnectorTimeOut.remove(0)
     }
 
     function init(indiceAction)
@@ -234,12 +284,11 @@ Item {
                         element.height = element.height + 40
                         rect.height = rect.height + 40
                         textFieldDefaultValue.anchors.top = controlAlias.bottom
-                        controlAlias.model = folderModel
+                        updateListAliasForSequence()
 
                     }else
                     {
 
-                        controlAlias.model = listAlias
                         if(gestAction.getNbAlias(indiceAct, indicePar) > 0)
                         {
                             element.height = element.height + 40
@@ -255,27 +304,12 @@ Item {
                             listAlias.append({_nom:gestAction.getNomAlias(indiceAct, indicePar, i), value:gestAction.getValueAlias(indiceAct, indicePar, i)})
                         }
                     }
-
-
-                }
-
-                FolderListModel
-                {
-                    id: folderModel
-                    folder:"file:///"+applicationDirPath+"/data/Sequence/"
-                    nameFilters: ["*.json"]
-                    showDirs: false
-                }
-
-                ListModel
-                {
-                    id:listAlias
-                    ListElement{ _nom:"x" ; value:"0"}
                 }
 
                 ComboBox {
                     id: controlAlias
                     height: 40
+                    model:listAlias
                     anchors.right: parent.right
                     anchors.rightMargin:5
                     anchors.left: parent.left
@@ -286,16 +320,9 @@ Item {
                     currentIndex: 0
                     onCurrentIndexChanged:
                     {
-                        if(model === listAlias)
+                        if(listAlias.count > currentIndex && currentIndex !== -1)
                         {
-                            if(listAlias.count > currentIndex && currentIndex !== -1)
-                            {
-                                displayText = listAlias.get(currentIndex)._nom
-                                textFieldDefaultValue.text = displayText
-                            }
-                        }else
-                        {
-                            displayText = folderModel.get(currentIndex, "fileName")
+                            displayText = listAlias.get(currentIndex).value
                             textFieldDefaultValue.text = displayText
                         }
                     }
@@ -303,7 +330,7 @@ Item {
                     delegate: ItemDelegate {
                         width: controlAlias.width
                         contentItem: Text {
-                            text: controlAlias.model === listAlias ? (_nom + "("+value+")") : fileName
+                            text: (_nom + "("+value+")")
                             color: "white"
                             font: controlAlias.font
                             elide: Text.ElideRight
@@ -400,8 +427,44 @@ Item {
         anchors.topMargin: 10
         MouseArea
         {
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            onClicked: entreeClicked(editAction)
+            onClicked:
+            {
+                if(mouse.button === Qt.RightButton)
+                {
+                    listConnectorDelete.clear()
+                    for(var i = 0; i < editAction.getNbPapa(); i++)
+                    {
+                        listConnectorDelete.append({_text:editAction.getNomPapa(i), index: listConnectorDelete.count})
+                    }
+
+                    contextMenuDeleteConnector.popup()
+                }else
+                    entreeClicked(editAction)
+            }
+
+            ListModel
+            {
+                id:listConnectorDelete
+                ListElement{_text:"Boop"; index : 0}
+            }
+
+            Menu
+            {
+                id: contextMenuDeleteConnector
+                Repeater
+                {
+                    model:listConnectorDelete
+                    MenuItem
+                    {
+                        id:item
+                        text:_text
+                        onClicked: editAction.abandonnerPere(index)
+                        Component.onCompleted: contextMenuDeleteConnector.addItem(item)
+                    }
+                }
+            }
         }
     }
 
@@ -421,7 +484,7 @@ Item {
         anchors.left: parent.right
         anchors.leftMargin: -5
         anchors.top: parent.top
-        anchors.topMargin: 10//isBlocant==1?5:10
+        anchors.topMargin: 10
         MouseArea
         {
             anchors.fill: parent

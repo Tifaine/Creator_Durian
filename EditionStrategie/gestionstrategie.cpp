@@ -16,6 +16,11 @@ void GestionStrategie::addEtape(Etape * etape)
     listEtape.append(etape);
 }
 
+void GestionStrategie::removeEtape(Etape * etape)
+{
+    listEtape.removeOne(etape);
+}
+
 Etape* GestionStrategie::getEtape(int indice)
 {
     if(indice < listEtape.size())
