@@ -67,7 +67,7 @@ Item {
 
             TabButton {
                 text: _nom
-                width: Math.max(80, bar.width / 8)
+                width: bar.width / 8
 
             }
         }

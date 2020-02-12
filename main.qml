@@ -5,6 +5,7 @@ import "ElementQML"
 import "ControleRoboclaw"
 import "EditionStrategie"
 import "EditionSequence"
+import "ControleDyna"
 
 Item {
     visible: true
@@ -69,6 +70,7 @@ Item {
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = false
                     break;
                 case 1:
                     mainPageRoboclaw.visible=false
@@ -76,6 +78,7 @@ Item {
                     editeurEtape.visible=true
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = false
                     break;
                 case 2:
                     mainPageRoboclaw.visible=false
@@ -83,6 +86,7 @@ Item {
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = true
+                    mainPageCreationDyna.visible = false
                     break;
                 case 3:
                     mainPageRoboclaw.visible=false
@@ -90,6 +94,7 @@ Item {
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=true
                     mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = false
                     break;
                 case 4:
                     mainPageRoboclaw.visible=true
@@ -97,6 +102,7 @@ Item {
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = false
                     break;
                 case 5:
                     mainPageRoboclaw.visible=false
@@ -104,6 +110,7 @@ Item {
                     editeurEtape.visible=false
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = true
                     break;
                 }
             }
@@ -154,6 +161,21 @@ Item {
 
         MainPageCreationSequence {
             id: mainPageCreationSequence
+            visible: false
+
+            anchors.left: choixOngletSide.right
+            anchors.leftMargin: 0
+
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+        }
+
+        MainPageCreationDyna {
+            id: mainPageCreationDyna
             visible: false
 
             anchors.left: choixOngletSide.right

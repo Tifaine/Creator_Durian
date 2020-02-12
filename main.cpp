@@ -32,6 +32,7 @@
 #include <QtCore/QDir>
 #include <QtQml/QQmlEngine>
 #include "ControleRoboclaw/gestionroboclaw.h"
+#include "ControleDyna/gestiondynamixel.h"
 #include "EditionStrategie/etape.h"
 #include "EditionStrategie/itemtaux.h"
 #include "EditionStrategie/gestionetape.h"
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
     GestionRoboclaw roboclaw;
+    GestionDynamixel dynamixel;
     GestionEtape gestEtape;
     GestionStrategie gestStrat;
     GestionAction gestAction;
@@ -70,6 +72,7 @@ int main(int argc, char *argv[])
 
     viewer.setTitle(QStringLiteral("Creator Durian"));
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);
+    viewer.engine()->rootContext()->setContextProperty("gestDynamixel", &dynamixel);
     viewer.engine()->rootContext()->setContextProperty("gestEtape", &gestEtape);
     viewer.engine()->rootContext()->setContextProperty("gestStrat", &gestStrat);
     viewer.engine()->rootContext()->setContextProperty("gestAction", &gestAction);

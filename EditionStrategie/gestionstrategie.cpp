@@ -208,10 +208,8 @@ void GestionStrategie::exportSequence(QString filename, QJsonArray* saveObjectEt
                     QJsonObject objectEditAction = v.toObject();
                     if(objectEditAction.contains("nomAction") )
                     {
-                        saveObject["nomAction"] = objectEditAction["nomAction"];
 
-
-                        if(saveObject["nomAction"].toString() == "Sequence")
+                        if(objectEditAction["nomAction"].toString() == "Sequence")
                         {
                             QJsonArray arrayFille;
                             if(objectEditAction.contains("arrayGirl") )
@@ -240,13 +238,18 @@ void GestionStrategie::exportSequence(QString filename, QJsonArray* saveObjectEt
                             }
 
 
-                        }else if (saveObject["nomAction"].toString() == "Fin")
+                        }else if (objectEditAction["nomAction"].toString() == "Fin")
                         {
+                            saveObject["nomAction"] = objectEditAction["nomAction"];
                             saveObject["indice"] = objectEditAction["indice"].toInt() + NB_MAX_ACTIONS*(nbSequence);
                             if(arrayFilleParent != NULL)
+                            {
                                 saveObject["arrayGirl"] = *arrayFilleParent;
+                            }
                         }else
                         {
+                            saveObject["nomAction"] = objectEditAction["nomAction"];
+
                             if (saveObject["nomAction"].toString() == "Départ")
                             {
                                 saveObject["indice"] = numeroSequence;

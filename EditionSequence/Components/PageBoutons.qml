@@ -305,8 +305,7 @@ Item {
                 contentItem: Text {
                     leftPadding: 10
                     rightPadding: controlLoad.indicator.width + controlLoad.spacing
-
-                    text: folderModel.get(controlLoad.currentIndex, "fileName")
+                    text: folderModel.count > 0 ? folderModel.get(controlLoad.currentIndex, "fileName") : ""
                     font: controlLoad.font
                     color: "white"
                     verticalAlignment: Text.AlignVCenter

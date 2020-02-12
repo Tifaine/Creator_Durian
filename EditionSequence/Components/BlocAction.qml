@@ -37,28 +37,10 @@ Item {
         onListFilesChanged:updateListAliasForSequence()
     }
 
-    function updateListAliasForSequence()
-    {
-        listAlias.clear()
-        for(var i = 0; i < gestSequence.getNbSequence(); i++)
-        {
-            listAlias.append({_nom:"Nom", value:gestSequence.getNomSequence(i)})
-        }
-    }
 
-    ListModel
-    {
-        id:listAlias
-        ListElement{ _nom:"x" ; value:"0"}
-    }
 
     function updateParam(indiceParam, value)
     {
-        if( testNom.text === "Sequence")
-        {
-
-        }
-
         listParam.set(indiceParam, {"value": value})
     }
 
@@ -306,6 +288,22 @@ Item {
                     }
                 }
 
+
+                function updateListAliasForSequence()
+                {
+                    listAlias.clear()
+                    for(var i = 0; i < gestSequence.getNbSequence(); i++)
+                    {
+                        listAlias.append({_nom:"Nom", value:gestSequence.getNomSequence(i)})
+                    }
+                }
+
+                ListModel
+                {
+                    id:listAlias
+                    ListElement{ _nom:"x" ; value:"0"}
+                }
+
                 ComboBox {
                     id: controlAlias
                     height: 40
@@ -429,6 +427,9 @@ Item {
         {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
+            hoverEnabled: true
+            onEntered: blocEntree.color = "white"
+            onExited: blocEntree.color = "green"
             onClicked:
             {
                 if(mouse.button === Qt.RightButton)

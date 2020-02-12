@@ -14,5 +14,6 @@
         <file>EditionSequence/Components/PageBoutons.qml</file>
         <file>EditionSequence/Components/BlocAction.qml</file>
         <file>EditionSequence/Components/Sequence.qml</file>
+        <file>ControleDyna/MainPageCreationDyna.qml</file>
     </qresource>
 </RCC>

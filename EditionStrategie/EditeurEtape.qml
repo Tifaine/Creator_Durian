@@ -186,11 +186,20 @@ Item {
 
     TextField {
         id: textFieldNomEtape
+        width: 150
         text: qsTr("")
         anchors.left: textNomEtape.right
         anchors.leftMargin: 15
         anchors.top: rectangle1.bottom
-        anchors.topMargin: 13
+        anchors.topMargin: 20
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -217,12 +226,21 @@ Item {
         id: textFieldNbPoints
         x: 3
         y: 3
+        width: 150
         text: qsTr("")
         anchors.leftMargin: 15
-        anchors.topMargin: 13
+        anchors.topMargin: 20
         anchors.top: rectangle1.bottom
         anchors.left: textNbPoint.right
         validator: IntValidator{bottom : 0; top : 999999}
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -277,12 +295,21 @@ Item {
         id: textFieldTpsMoyen
         x: -4
         y: -5
+        width: 150
         text: qsTr("")
-        anchors.topMargin: 13
+        anchors.topMargin: 20
         anchors.leftMargin: 30
         anchors.top: rectangle1.bottom
         anchors.left: textTempsMoyen.right
         validator: IntValidator{bottom : 0; top : 100}
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -299,7 +326,7 @@ Item {
         color: "#ffffff"
         text: qsTr("Temps d'exécution max : ")
         font.bold: true
-        anchors.topMargin: 44
+        anchors.topMargin: 45
         anchors.leftMargin: 40
         anchors.top: textTempsMoyen.bottom
         font.pixelSize: 13
@@ -320,12 +347,21 @@ Item {
         id: textFieldTpsMax
         x: -6
         y: -7
+        width: 150
         text: qsTr("")
         anchors.leftMargin: 45
-        anchors.topMargin: 20
+        anchors.topMargin: 35
         anchors.top: textFieldTpsMoyen.bottom
         anchors.left: textTempsMax.right
         validator: IntValidator{bottom : 0; top : 100}
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -342,7 +378,7 @@ Item {
         color: "#ffffff"
         text: qsTr("Date max avant désactivation : ")
         font.bold: true
-        anchors.topMargin: 40
+        anchors.topMargin: 45
         anchors.leftMargin: 40
         anchors.top: textTempsMax.bottom
         font.pixelSize: 13
@@ -363,12 +399,21 @@ Item {
         id: textFieldDateMax
         x: -1
         y: -2
+        width: 150
         text: qsTr("")
-        anchors.leftMargin: 5
-        anchors.topMargin: 20
+        anchors.leftMargin: 6
+        anchors.topMargin: 35
         anchors.top: textFieldTpsMax.bottom
         anchors.left: textDateMax.right
         validator: IntValidator{bottom : 0; top : 100}
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -386,7 +431,7 @@ Item {
         text: qsTr("Deadline : ")
         font.bold: true
         anchors.leftMargin: 40
-        anchors.topMargin: 48
+        anchors.topMargin: 45
         anchors.top: textDateMax.bottom
         font.pixelSize: 13
         anchors.left: textFieldNbPoints.right
@@ -406,12 +451,21 @@ Item {
         id: textFieldDeadline
         x: -3
         y: -4
+        width: 150
         text: qsTr("")
-        anchors.topMargin: 20
+        anchors.topMargin: 35
         anchors.leftMargin: 142
         anchors.top: textFieldDateMax.bottom
         anchors.left: textDeadLine.right
         validator: IntValidator{bottom : 0; top : 100}
+        color: "white"
+        background: Rectangle {
+            color:"#22ffffff"
+            radius: 10
+            border.color: "#333"
+            anchors.fill: parent
+            border.width: 1
+        }
         onTextChanged:
         {
             if(etapeEnCours !== -1 )
@@ -561,7 +615,7 @@ Item {
             leftPadding: 10
             rightPadding: controlSequence.indicator.width + controlSequence.spacing
 
-            text: folderModel.get(controlSequence.currentIndex, "fileName")
+            text: folderModel.count > 0 ? folderModel.get(controlSequence.currentIndex, "fileName"):""
             font: controlSequence.font
             color: "white"
             verticalAlignment: Text.AlignVCenter
@@ -620,6 +674,6 @@ Item {
 
 /*##^##
 Designer {
-    D{i:38;anchors_y:299}D{i:39;anchors_y:287}D{i:41;anchors_width:120}D{i:54;anchors_width:93;anchors_x:15;anchors_y:410}
+    D{i:39;anchors_y:287}D{i:38;anchors_y:299}D{i:41;anchors_width:120}D{i:54;anchors_width:93;anchors_x:15;anchors_y:410}
 }
 ##^##*/
