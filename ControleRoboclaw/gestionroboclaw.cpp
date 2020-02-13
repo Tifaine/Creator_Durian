@@ -274,6 +274,7 @@ void GestionRoboclaw::saveParam()
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
         QJsonObject saveObject;
         saveObject["coeffPG"] = coeffPg;
         saveObject["coeffIG"] = coeffIg;

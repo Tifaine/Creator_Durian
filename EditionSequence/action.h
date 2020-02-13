@@ -44,6 +44,7 @@ public slots:
     QString getNomParam(int indiceParam);
     void setValueDefaultParam(int indiceParam, QString valueDefault);
     QString getValueDefaultParam(int indiceParam);
+    void eraseParam(int indice);
 
     void addAlias(int indiceParam);
     int getnbAlias(int indiceParam);

@@ -29,6 +29,7 @@ void Action::setIsActionBlocante(bool value)
 void Action::addParam()
 {
     listParam.append(new param);
+    qDebug()<<listParam.size();
 }
 
 int Action::getNbParam()
@@ -43,12 +44,16 @@ param* Action::getParam(int indice)
 
 void Action::setNomParam(int indiceParam, QString nomParam)
 {
-    listParam.at(indiceParam)->nomParam = nomParam;
+    if(indiceParam < listParam.size())
+        listParam.at(indiceParam)->nomParam = nomParam;
 }
 
 QString Action::getNomParam(int indiceParam)
 {
-    return listParam.at(indiceParam)->nomParam;
+    if(indiceParam < listParam.size())
+        return listParam.at(indiceParam)->nomParam;
+
+    return "";
 }
 
 void Action::setValueDefaultParam(int indiceParam, QString valueDefault)
@@ -59,17 +64,28 @@ void Action::setValueDefaultParam(int indiceParam, QString valueDefault)
 
 QString Action::getValueDefaultParam(int indiceParam)
 {
-    return listParam.at(indiceParam)->valueParam;
+    if(indiceParam < listParam.size())
+        return listParam.at(indiceParam)->valueParam;
+    return "";
+}
+
+void Action::eraseParam(int indice)
+{
+    qDebug()<<"la";
+    listParam.removeAt(indice);
 }
 
 void Action::addAlias(int indiceParam)
 {
-    listParam.at(indiceParam)->listAlias.append(new alias);
+    if(indiceParam < listParam.size())
+        listParam.at(indiceParam)->listAlias.append(new alias);
 }
 
 int Action::getnbAlias(int indiceParam)
 {
-    return listParam.at(indiceParam)->listAlias.size();
+    if(indiceParam < listParam.size())
+        return listParam.at(indiceParam)->listAlias.size();
+    return -1;
 }
 
 alias* Action::getAlias(int indiceParam, int indiceAlias)
@@ -106,6 +122,7 @@ void Action::save()
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
 
         QJsonObject saveObject = saveAction();
         QJsonObject etapeObject;

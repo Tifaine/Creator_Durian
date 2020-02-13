@@ -30,10 +30,32 @@ Item {
         }
         onAddParam:
         {
-            actionEnCours.addParam();
-            actionEnCours.setNomParam(actionEnCours.getNbParam()-1, name);
-            actionEnCours.setValueDefaultParam(actionEnCours.getNbParam()-1, defaultValue);
-            updateParam(actionEnCours)
+
+            if(name === "Timeout")
+            {
+                var alreadyThere = false
+                for( var i = 0; i < actionEnCours.getNbParam(); i++)
+                {
+                    if(actionEnCours.getNomParam(i) === "Timeout")
+                    {
+                        alreadyThere = true
+                    }
+                }
+
+                if(!alreadyThere)
+                {
+                    actionEnCours.addParam();
+                    actionEnCours.setNomParam(actionEnCours.getNbParam()-1, name);
+                    actionEnCours.setValueDefaultParam(actionEnCours.getNbParam()-1, defaultValue);
+                    updateParam(actionEnCours)
+                }
+            }else
+            {
+                actionEnCours.addParam();
+                actionEnCours.setNomParam(actionEnCours.getNbParam()-1, name);
+                actionEnCours.setValueDefaultParam(actionEnCours.getNbParam()-1, defaultValue);
+                updateParam(actionEnCours)
+            }
         }
         onAddAlias:
         {
@@ -262,7 +284,37 @@ Item {
         {
             if(actionEnCours !== 0)
             {
+                var isAlreadyThere = false
+                for( var i = 0; i < actionEnCours.getNbParam(); i++)
+                {
+                    if(actionEnCours.getNomParam(i) === "Timeout")
+                    {
+                        isAlreadyThere = true
+                    }
+                }
+
                 actionEnCours.isActionBlocante = checked
+
+
+                    if(checked && !isAlreadyThere)
+                    {
+                        actionEnCours.addParam();
+                        actionEnCours.setNomParam(actionEnCours.getNbParam()-1, "Timeout");
+                        actionEnCours.setValueDefaultParam(actionEnCours.getNbParam()-1, "5000");
+                        listParam.append({_nom:"Timeout", _valueDefaut:"5000", index:listParam.count, _color:"#00ffffff"})
+                    }else if( !checked)
+                    {
+                        for( var i = 0; i < actionEnCours.getNbParam(); i++)
+                        {
+                            console.log(actionEnCours.getNomParam(i))
+                            if(actionEnCours.getNomParam(i) === "Timeout")
+                            {
+                                actionEnCours.eraseParam(i)
+                            }
+                        }
+                        updateParam(actionEnCours)
+                    }
+
             }
         }
     }

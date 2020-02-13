@@ -306,6 +306,10 @@ Item {
         anchors.leftMargin: 100
         anchors.top: rectangle1.bottom
         anchors.topMargin: 35
+        onClicked:
+        {
+            gestDynamixel.saveDyna(dynaSelected)
+        }
     }
 
     Button {

@@ -135,6 +135,7 @@ void Etape::save()
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
 
         QJsonObject saveObject = saveEtape();
         QJsonObject etapeObject;

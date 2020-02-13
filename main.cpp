@@ -44,10 +44,13 @@
 #include "EditionSequence/Components/connector.h"
 #include <QQmlContext>
 
+void initRep();
+
 int main(int argc, char *argv[])
 {
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
+    initRep();
     GestionRoboclaw roboclaw;
     GestionDynamixel dynamixel;
     GestionEtape gestEtape;
@@ -84,4 +87,40 @@ int main(int argc, char *argv[])
     roboclaw.init();
 
     return app.exec();
+}
+
+void initRep()
+{
+    if( ! QDir("data").exists())
+    {
+        QDir().mkdir("data");
+        QDir().mkdir("data/Dyna");
+        QDir().mkdir("data/Etape");
+        QDir().mkdir("data/Sequence");
+        QDir().mkdir("data/Sequence/Action");
+        QDir().mkdir("data/Strategie");
+    }else
+    {
+        if( ! QDir("data/Dyna").exists())
+        {
+            QDir().mkdir("data/Dyna");
+        }
+        if( ! QDir("data/Etape").exists())
+        {
+            QDir().mkdir("data/Etape");
+        }
+        if( ! QDir("data/Sequence").exists())
+        {
+            QDir().mkdir("data/Sequence");
+            QDir().mkdir("data/Sequence/Action");
+        }
+        if( ! QDir("data/Sequence/Action").exists())
+        {
+            QDir().mkdir("data/Sequence/Action");
+        }
+        if( ! QDir("data/Strategie").exists())
+        {
+            QDir().mkdir("data/Strategie");
+        }
+    }
 }

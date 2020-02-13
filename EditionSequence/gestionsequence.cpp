@@ -23,6 +23,7 @@ void GestionSequence::save(QString nomFile)
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
         QJsonObject saveObject;
         QJsonArray arraySequence;
         for(auto item : listAction)

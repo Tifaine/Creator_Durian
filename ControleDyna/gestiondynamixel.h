@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 
 typedef struct dyna
 {
@@ -38,6 +39,7 @@ private:
     void init();
 private:
     QList<dyna *> listDyna;
+    QMap<int, QString> mapDyna;
 
 signals:
 

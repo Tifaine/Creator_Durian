@@ -49,6 +49,7 @@ void GestionStrategie::saveStrategie(QString nomFile)
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
         QJsonObject saveObject;
         QJsonArray arrayStrat;
         for(auto item : listEtape)
@@ -133,6 +134,7 @@ void GestionStrategie::exportStrat()
     }else
     {
         saveFile.flush();
+        saveFile.resize(0);
         QJsonObject saveObject;
         QJsonArray arrayStrat;
         int nbSequence = 0;
