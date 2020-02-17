@@ -46,6 +46,7 @@ public slots:
     void abandonnerPere(EditableAction * act);
     void abandonnerPere(int indice);
     int getNbPapa();
+    void clearListFille();
     QString getNomPapa(int indice);
     int getXBloc() const;
     void setXBloc(int value);
@@ -61,6 +62,9 @@ public slots:
     bool addGirlToFather(EditableAction* fille);
     bool addGirlToTimeout(EditableAction * fille);
     void addFatherToGirl(EditableAction * pere);
+
+    bool addGirlToFatherForExport(EditableAction* fille);
+    bool addGirlToTimeoutForExport(EditableAction * fille);
 
     void moveConnectorFather(int x, int y);
     void moveConnectorTimeout(int x, int y);

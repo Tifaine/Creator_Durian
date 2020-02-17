@@ -138,6 +138,7 @@ void GestionStrategie::exportStrat()
         QJsonObject saveObject;
         QJsonArray arrayStrat;
         int nbSequence = 0;
+
         for(auto item : listEtape)
         {
             QJsonObject saveObjectEtape;
@@ -148,8 +149,7 @@ void GestionStrategie::exportStrat()
             saveObjectEtape["dateMax"] = item->getDateMax();
             saveObjectEtape["deadline"] = item->getDeadline();
             saveObjectEtape["color"] = item->getColor();
-            QJsonArray arraySequence;
-            exportSequence(item->getNameSequence(), &arraySequence, nbSequence, &nbSequence, 0, NULL);
+            QJsonArray arraySequence = exportSequence(item->getNameSequence());
             saveObjectEtape["arraySequence"] = arraySequence;
             nbSequence++;
             saveObjectEtape["xEtape"] = item->getX();
@@ -188,8 +188,9 @@ int GestionStrategie::getNbEtape()
     return listEtape.size();
 }
 
-void GestionStrategie::exportSequence(QString filename, QJsonArray* saveObjectEtape, int nbSequence, int* nbSequenceToReturn, int numeroSequence, QJsonArray* arrayFilleParent)
+int GestionStrategie::appendSequence(QString filename, EditableAction* blocSequenceToOpen)
 {
+    int toReturn = 0;
     QFile loadFile("data/Sequence/"+ filename);
     if(!loadFile.open(QIODevice::ReadOnly))
     {
@@ -199,6 +200,7 @@ void GestionStrategie::exportSequence(QString filename, QJsonArray* saveObjectEt
         QByteArray saveData = loadFile.readAll();
         QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
         QJsonObject json = loadDoc.object();
+        int indiceDepart = listAction.size();
         if(json.contains("sequence"))
         {
             if( json["sequence"].isArray())
@@ -206,110 +208,108 @@ void GestionStrategie::exportSequence(QString filename, QJsonArray* saveObjectEt
                 QJsonArray array = json["sequence"].toArray();
                 foreach (const QJsonValue & v, array)
                 {
-                    QJsonObject saveObject;
-                    QJsonObject objectEditAction = v.toObject();
-                    if(objectEditAction.contains("nomAction") )
+                    listAction.append(new EditableAction);
+                    toReturn++;
+                    listAction.last()->open1(v.toObject());
+                }
+                int indice = 0;
+                foreach (const QJsonValue & v, array)
+                {
+                    listAction.at(indiceDepart+indice)->open2(v.toObject());
+                    for(int i = 0; i < listAction.at(indiceDepart+indice)->getNbfille(); i++)
                     {
+                        listAction.at(indiceDepart+indice)->addGirlToFatherForExport(listAction.at(indiceDepart + listAction.at(indiceDepart + indice)->getIndicefille(i)));
+                    }
+                    for(int i = 0; i < listAction.at(indiceDepart+indice)->getNbTimeout(); i++)
+                    {
+                        listAction.at(indiceDepart+indice)->addGirlToTimeoutForExport(listAction.at(indiceDepart + listAction.at(indiceDepart + indice)->getIndiceTimeout(i)));
+                    }
+                    indice++;
+                }
+                for(int i = indiceDepart; i < listAction.size(); i++)
+                {
+                    if(listAction.at(i)->getNomAction() == "Sequence")
+                    {
+                        int toAdd = appendSequence(listAction.at(i)->getValueDefaultParam(0), (listAction.at(i)));
+                        i+= toAdd;
 
-                        if(objectEditAction["nomAction"].toString() == "Sequence")
+                    }else if(listAction.at(i)->getNomAction() == "Fin" && blocSequenceToOpen != NULL)
+                    {
+                        for(int indice = 0; indice < blocSequenceToOpen->getNbfille(); indice++)
                         {
-                            QJsonArray arrayFille;
-                            if(objectEditAction.contains("arrayGirl") )
-                            {
-                                QString indiceFille("indiceFille");
-
-                                QJsonArray array = objectEditAction["arrayGirl"].toArray();
-
-                                foreach (const QJsonValue & v, array)
-                                {
-                                    QJsonObject obj = v.toObject();
-                                    if(obj.contains("indiceFille") )
-                                    {
-                                        QJsonObject item_girl;
-                                        item_girl.insert(indiceFille, obj["indiceFille"].toInt() + NB_MAX_ACTIONS*(nbSequence));
-                                        arrayFille.push_back(QJsonValue(item_girl));
-                                    }
-                                }
-                            }
-                            QJsonArray array = objectEditAction["arrayParam"].toArray();
-                            foreach (const QJsonValue & v, array)
-                            {
-                                QJsonObject obj = v.toObject();
-                                (*nbSequenceToReturn)++;
-                                exportSequence(obj["defaultValue"].toString(), saveObjectEtape, nbSequence+1, nbSequenceToReturn, objectEditAction["indice"].toInt()+ 500*(nbSequence), &arrayFille);
-                            }
-
-
-                        }else if (objectEditAction["nomAction"].toString() == "Fin")
-                        {
-                            saveObject["nomAction"] = objectEditAction["nomAction"];
-                            saveObject["indice"] = objectEditAction["indice"].toInt() + NB_MAX_ACTIONS*(nbSequence);
-                            if(arrayFilleParent != NULL)
-                            {
-                                saveObject["arrayGirl"] = *arrayFilleParent;
-                            }
-                        }else
-                        {
-                            saveObject["nomAction"] = objectEditAction["nomAction"];
-
-                            if (saveObject["nomAction"].toString() == "Départ")
-                            {
-                                saveObject["indice"] = numeroSequence;
-                            }else
-                            {
-                                saveObject["indice"] = objectEditAction["indice"].toInt() + NB_MAX_ACTIONS*(nbSequence);
-                            }
-                            if(objectEditAction.contains("blocante") )
-                            {
-                                saveObject["blocante"] = objectEditAction["blocante"];
-                            }
-                            if(objectEditAction.contains("arrayParam") )
-                            {
-                                saveObject["arrayParam"] = objectEditAction["arrayParam"];
-                            }
-                            QJsonArray arrayTimeout;
-                            QJsonArray arrayFille;
-                            if(objectEditAction.contains("arrayGirl") )
-                            {
-                                QString indiceFille("indiceFille");
-
-                                QJsonArray array = objectEditAction["arrayGirl"].toArray();
-
-                                foreach (const QJsonValue & v, array)
-                                {
-                                    QJsonObject obj = v.toObject();
-                                    if(obj.contains("indiceFille") )
-                                    {
-                                        QJsonObject item_girl;
-                                        item_girl.insert(indiceFille, obj["indiceFille"].toInt() + NB_MAX_ACTIONS*(nbSequence));
-                                        arrayFille.push_back(QJsonValue(item_girl));
-                                    }
-                                }
-                            }
-                            if(objectEditAction.contains("arrayTimeout") )
-                            {
-                                QString indiceTimeout("indiceTimeout");
-
-                                QJsonArray array = objectEditAction["arrayTimeout"].toArray();
-                                foreach (const QJsonValue & v, array)
-                                {
-                                    QJsonObject obj = v.toObject();
-                                    if(obj.contains("indiceTimeout") )
-                                    {
-                                        QJsonObject item_indiceTimeout;
-                                        item_indiceTimeout.insert(indiceTimeout, obj["indiceTimeout"].toInt() + NB_MAX_ACTIONS*(nbSequence));
-                                        arrayTimeout.push_back(QJsonValue(item_indiceTimeout));
-                                    }
-                                }
-                            }
-                            saveObject["arrayGirl"] = arrayFille;
-                            saveObject["arrayTimeout"] = arrayTimeout;
+                            listAction.at(i)->addGirlToFatherForExport(blocSequenceToOpen->getListFille().at(indice));
                         }
-                        saveObjectEtape->push_back(QJsonValue(saveObject));
                     }
                 }
-
+                for(int i = indiceDepart; i < listAction.size(); i++)
+                {
+                    if(listAction.at(i)->getNomAction() == "Départ" && blocSequenceToOpen != NULL)
+                    {
+                        blocSequenceToOpen->clearListFille();
+                        blocSequenceToOpen->addGirlToFatherForExport(listAction.at(i));
+                    }
+                }
             }
         }
     }
+    return toReturn;
+}
+
+QJsonArray GestionStrategie::exportSequence(QString filename)
+{
+    QJsonObject saveObject;
+    QJsonArray arraySequence;
+    appendSequence(filename, NULL);
+    for(auto item : listAction)
+    {
+        QJsonObject saveObject;
+        QJsonArray arrayParam;
+        QString nomParam("nomParam");
+        QString defaultValue("defaultValue");
+        for(int i = 0; i < item->getNbParam(); i++)
+        {
+            QJsonObject item_data;
+            item_data.insert(nomParam, QJsonValue(item->getNomParam(i)));
+            item_data.insert(defaultValue, QJsonValue(item->getValueDefaultParam(i)));
+            arrayParam.push_back(QJsonValue(item_data));
+        }
+
+        QJsonArray arrayPere;
+        QString indicePere("indicePere");
+        for(int i = 0; i < item->getListPere().size(); i++)
+        {
+            QJsonObject item_daddy;
+            item_daddy.insert(indicePere, listAction.indexOf(item->getListPere().at(i)));
+            arrayPere.push_back(QJsonValue(item_daddy));
+        }
+
+        QJsonArray arrayFille;
+        QString indiceFille("indiceFille");
+        for(int i = 0; i < item->getListFille().size(); i++)
+        {
+            QJsonObject item_girl;
+            item_girl.insert(indiceFille, listAction.indexOf(item->getListFille().at(i)));
+            arrayFille.push_back(QJsonValue(item_girl));
+        }
+
+        QJsonArray arrayTimeout;
+        QString indiceTimeout("indiceTimeout");
+        for(int i = 0; i < item->getListTimeOut().size(); i++)
+        {
+            QJsonObject item_timeout;
+            item_timeout.insert(indiceTimeout, listAction.indexOf(item->getListTimeOut().at(i)));
+            arrayTimeout.push_back(QJsonValue(item_timeout));
+        }
+        saveObject["arrayDaddy"] = arrayPere;
+        saveObject["arrayGirl"] = arrayFille;
+        saveObject["arrayTimeout"] = arrayTimeout;
+        saveObject["arrayParam"] = arrayParam;
+        saveObject["blocante"] = item->getIsActionBlocante();
+        saveObject["indice"] = listAction.indexOf(item);
+        saveObject["xBloc"] = item->getXBloc();
+        saveObject["yBloc"] = item->getYBloc();
+        saveObject["nomAction"] = item->getNomAction();
+        arraySequence.push_back(QJsonValue(saveObject));
+    }
+    return arraySequence;
 }

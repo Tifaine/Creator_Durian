@@ -31,11 +31,7 @@ Item {
         listConnectorFather.append({_xB:0, _yB:0, color:"steelblue"})
     }
 
-    Connections
-    {
-        target:gestSequence
-        onListFilesChanged:updateListAliasForSequence()
-    }
+
 
 
 
@@ -287,7 +283,11 @@ Item {
                         }
                     }
                 }
-
+                Connections
+                {
+                    target:gestSequence
+                    onListFilesChanged:updateListAliasForSequence()
+                }
 
                 function updateListAliasForSequence()
                 {

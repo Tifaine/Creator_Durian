@@ -107,6 +107,11 @@ int EditableAction::getNbPapa()
     return listPere.count();
 }
 
+void EditableAction::clearListFille()
+{
+        listFille.clear();
+}
+
 QString EditableAction::getNomPapa(int indice)
 {
     return listPere.at(indice)->nomAction;
@@ -224,6 +229,26 @@ bool EditableAction::addGirlToTimeout(EditableAction * fille)
 void EditableAction::addFatherToGirl(EditableAction * pere)
 {
     listPere.append(pere);
+}
+
+bool EditableAction::addGirlToFatherForExport(EditableAction* fille)
+{
+    if(!(listFille.contains(fille)))
+    {
+        listFille.insert(0, fille);
+        return true;
+    }
+    return false;
+}
+
+bool EditableAction::addGirlToTimeoutForExport(EditableAction * fille)
+{
+    if(!(listTimeOut.contains(fille)))
+    {
+        listTimeOut.insert(0, fille);
+        return true;
+    }
+    return false;
 }
 
 void EditableAction::moveConnectorFather(int x, int y)

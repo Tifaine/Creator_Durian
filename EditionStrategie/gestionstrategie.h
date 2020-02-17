@@ -6,6 +6,8 @@
 #include <QDir>
 #include "etape.h"
 
+#include "../EditionSequence/editableaction.h"
+
 class GestionStrategie : public QObject
 {
     Q_OBJECT
@@ -34,7 +36,9 @@ signals:
 private:
     QList <Etape *> listEtape;
     QList <QString> listStrat;
-    void exportSequence(QString filename, QJsonArray* saveObjectEtape, int nbSequence, int* nbSequenceToReturn, int numeroSequence, QJsonArray* arrayFilleParent);
+    QList <EditableAction *> listAction;
+    int appendSequence(QString filename, EditableAction* blocSequenceToOpen);
+    QJsonArray exportSequence(QString filename);
 
 };
 
