@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+
 #define NB_MAX_ACTIONS   500
 
 GestionStrategie::GestionStrategie(QObject *parent) : QObject(parent)
@@ -149,6 +150,7 @@ void GestionStrategie::exportStrat()
             saveObjectEtape["dateMax"] = item->getDateMax();
             saveObjectEtape["deadline"] = item->getDeadline();
             saveObjectEtape["color"] = item->getColor();
+            mapIndice.clear();
             QJsonArray arraySequence = exportSequence(item->getNameSequence());
             saveObjectEtape["arraySequence"] = arraySequence;
             nbSequence++;
@@ -171,7 +173,7 @@ void GestionStrategie::exportStrat()
                 array_Taux.push_back(QJsonValue(item_data));
             }
 
-            saveObject["TauxArray"] = array_Taux;
+            saveObjectEtape["TauxArray"] = array_Taux;
             arrayStrat.push_back(QJsonValue(saveObjectEtape));
         }
 
@@ -188,7 +190,7 @@ int GestionStrategie::getNbEtape()
     return listEtape.size();
 }
 
-int GestionStrategie::appendSequence(QString filename, EditableAction* blocSequenceToOpen)
+int GestionStrategie::appendSequence(QString filename, int indiceSequence)
 {
     int toReturn = 0;
     QFile loadFile("data/Sequence/"+ filename);
@@ -211,6 +213,10 @@ int GestionStrategie::appendSequence(QString filename, EditableAction* blocSeque
                     listAction.append(new EditableAction);
                     toReturn++;
                     listAction.last()->open1(v.toObject());
+                    if(listAction.last()->getNomAction() == "Départ")
+                    {
+                        mapIndice[listAction.count()-1] = false;
+                    }
                 }
                 int indice = 0;
                 foreach (const QJsonValue & v, array)
@@ -230,23 +236,26 @@ int GestionStrategie::appendSequence(QString filename, EditableAction* blocSeque
                 {
                     if(listAction.at(i)->getNomAction() == "Sequence")
                     {
-                        int toAdd = appendSequence(listAction.at(i)->getValueDefaultParam(0), (listAction.at(i)));
+                        int toAdd = appendSequence(listAction.at(i)->getValueDefaultParam(0), i);
                         i+= toAdd;
+                        toReturn += toAdd;
 
-                    }else if(listAction.at(i)->getNomAction() == "Fin" && blocSequenceToOpen != NULL)
+                    }else if(listAction.at(i)->getNomAction() == "Fin" && indiceSequence != -1)
                     {
-                        for(int indice = 0; indice < blocSequenceToOpen->getNbfille(); indice++)
+                        for(int indice = 0; indice < listAction.at(indiceSequence)->getNbfille(); indice++)
                         {
-                            listAction.at(i)->addGirlToFatherForExport(blocSequenceToOpen->getListFille().at(indice));
+                            listAction.at(i)->addGirlToFatherForExport(listAction.at(indiceSequence)->getListFille().at(indice));
                         }
                     }
                 }
                 for(int i = indiceDepart; i < listAction.size(); i++)
                 {
-                    if(listAction.at(i)->getNomAction() == "Départ" && blocSequenceToOpen != NULL)
+                    if(listAction.at(i)->getNomAction() == "Départ" && indiceSequence != -1 && mapIndice.contains(i) && !(mapIndice[i]))
                     {
-                        blocSequenceToOpen->clearListFille();
-                        blocSequenceToOpen->addGirlToFatherForExport(listAction.at(i));
+                        qDebug()<<indiceSequence<<" "<<i;
+                        mapIndice[i] = true;
+                        listAction.at(indiceSequence)->clearListFille();
+                        listAction.at(indiceSequence)->addGirlToFatherForExport(listAction.at(i));
                     }
                 }
             }
@@ -259,7 +268,7 @@ QJsonArray GestionStrategie::exportSequence(QString filename)
 {
     QJsonObject saveObject;
     QJsonArray arraySequence;
-    appendSequence(filename, NULL);
+    appendSequence(filename, -1);
     for(auto item : listAction)
     {
         QJsonObject saveObject;

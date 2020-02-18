@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 #include <QDir>
 #include "etape.h"
 
@@ -37,8 +38,9 @@ private:
     QList <Etape *> listEtape;
     QList <QString> listStrat;
     QList <EditableAction *> listAction;
-    int appendSequence(QString filename, EditableAction* blocSequenceToOpen);
+    int appendSequence(QString filename, int indiceSequence);
     QJsonArray exportSequence(QString filename);
+    QMap<int, bool> mapIndice;
 
 };
 
