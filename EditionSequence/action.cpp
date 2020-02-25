@@ -29,7 +29,6 @@ void Action::setIsActionBlocante(bool value)
 void Action::addParam()
 {
     listParam.append(new param);
-    qDebug()<<listParam.size();
 }
 
 int Action::getNbParam()
@@ -71,7 +70,6 @@ QString Action::getValueDefaultParam(int indiceParam)
 
 void Action::eraseParam(int indice)
 {
-    qDebug()<<"la";
     listParam.removeAt(indice);
 }
 

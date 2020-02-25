@@ -19,6 +19,10 @@ void EditableAction::open1(QJsonObject json)
     {
         setYBloc(json["yBloc"].toInt());
     }
+    if(json.contains("blocante") )
+    {
+        setIsActionBlocante(json["blocante"].toBool());
+    }
     if(json.contains("arrayParam") )
     {
         QJsonArray array = json["arrayParam"].toArray();

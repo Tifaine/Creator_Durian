@@ -252,7 +252,6 @@ int GestionStrategie::appendSequence(QString filename, int indiceSequence)
                 {
                     if(listAction.at(i)->getNomAction() == "Départ" && indiceSequence != -1 && mapIndice.contains(i) && !(mapIndice[i]))
                     {
-                        qDebug()<<indiceSequence<<" "<<i;
                         mapIndice[i] = true;
                         listAction.at(indiceSequence)->clearListFille();
                         listAction.at(indiceSequence)->addGirlToFatherForExport(listAction.at(i));
