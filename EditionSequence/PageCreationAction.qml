@@ -123,13 +123,13 @@ Item {
                 {
                     id:rect
                     height:40
-                    width:90
+                    width:110
                     color:_color
                     radius: 10
                     border.color: "#ffffff"
                     border.width: 1
                     anchors.left: repeaterListAction.left
-                    anchors.leftMargin: (index%2)==1?(index==1?0:(Math.floor(index/2))*100)+5:((index/2)*100)+5
+                    anchors.leftMargin: (index%2)==1?(index==1?0:(Math.floor(index/2))*115)+5:((index/2)*115)+5
                     anchors.top: repeaterListAction.top
                     anchors.topMargin:(index%2)==1?50:5
 
@@ -150,9 +150,9 @@ Item {
                         color: _color//"#0cfdfdfd"
                         radius: 10
                         anchors.right: parent.right
-                        anchors.rightMargin: 3
+                        anchors.rightMargin: 1
                         anchors.left: parent.left
-                        anchors.leftMargin: 3
+                        anchors.leftMargin: 1
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 3
                         anchors.top: parent.top
@@ -183,7 +183,6 @@ Item {
                                 actionEnCours = action
                                 updateParam(action)
                                 tfNomAction.text = action.nomAction
-
                             }
                         }
                     }

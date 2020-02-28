@@ -15,6 +15,7 @@ public:
 
 public slots:
     void addAction( EditableAction * act);
+    void eraseAction( EditableAction * act);
     void save(QString nomFile);
     void open(QString nomFile);
     void clearAction();

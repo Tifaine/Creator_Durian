@@ -5,7 +5,8 @@ import QtQuick.Dialogs 1.2
 import gestionSequence 1.0
 
 Item {
-
+    id:item1
+    focus:visible===true?true:false
     function addAction(index)
     {
         listAction.append({_indiceAction:index, index:listAction.count, _color:"#00ffffff", _x:flickable.contentX, _y:flickable.contentY})
@@ -14,6 +15,49 @@ Item {
     function save(nomfile)
     {
         gestSequence.save(nomfile)
+    }
+
+    property bool ctrl_pressed: false
+    Keys.onPressed:
+    {
+        if (event.key === Qt.Key_Control)
+        {
+            ctrl_pressed = true
+            event.accepted = true;
+        }else if (event.key === Qt.Key_M)
+        {
+            if(ctrl_pressed)
+            {
+                if(rectParent.scale > 0.2)
+                {
+                    mXScale -= 0.2
+                    mYScale -= 0.2
+                }
+
+            }
+        }else if (event.key === Qt.Key_P)
+        {
+            if(ctrl_pressed)
+            {
+                mXScale += 0.2
+                mYScale += 0.2
+            }
+        }else if (event.key === Qt.Key_R)
+        {
+            if(ctrl_pressed)
+            {
+                mXScale = 1
+                mYScale = 1
+            }
+        }
+    }
+    Keys.onReleased:
+    {
+        if (event.key === Qt.Key_Control)
+        {
+            ctrl_pressed = false
+            event.accepted = true;
+        }
     }
 
     function open(nomFile)
@@ -64,147 +108,158 @@ Item {
             repeaterListAction.itemAt(indicePere).addATimeOut();
             repeaterListAction.itemAt(indiceTimeout).action.addFatherToGirl(repeaterListAction.itemAt(indicePere).action)
         }
-
-
     }
 
     property var sortieClick : -1
     property var timeoutClick : -1
     property var entreeClick : -1
     property var lastActionCreate : -1
-    Flickable
+    property var mXScale:1
+    property var mYScale:1
+    Rectangle
     {
-        clip:true
-        id: flickable
-        flickableDirection: Flickable.HorizontalAndVerticalFlick
         anchors.fill: parent
-        contentWidth: 15000; contentHeight: 15000
-        contentX: 0
-        contentY:0
+        id:rectParent
+        color:"transparent"
 
-        ScrollBar.vertical: ScrollBar {
-            parent: flickable.parent
-            anchors.top: flickable.top
-            anchors.right: flickable.right
-            anchors.bottom: flickable.bottom
-        }
-        ScrollBar.horizontal: ScrollBar {
-            parent: flickable.parent
-            anchors.left: flickable.left
-            anchors.right: flickable.right
-            anchors.bottom: flickable.bottom
-        }
-        Rectangle
+        Flickable
         {
-            id:rectangle5
+            clip:true
+            id: flickable
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
             anchors.fill: parent
-            color:"transparent"
+            contentWidth: 15000; contentHeight: 15000
+            contentX: 0
+            contentY:0
 
-            property int behaviorSelected:-1
-
-            MouseArea
-            {
-                propagateComposedEvents: true
-                anchors.fill: parent
-                hoverEnabled: true
-                onMouseXChanged:
-                {
-                    if(sortieClick !== -1)
-                    {
-                        sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
-                                                        mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
-                    }else if(timeoutClick !== -1)
-                    {
-                        timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather -10),
-                                                          mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
-                    }
-                }
-                onMouseYChanged:
-                {
-                    if(sortieClick !== -1)
-                    {
-                        sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
-                                                        mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
-                    }else if(timeoutClick !== -1)
-                    {
-                        timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather - 10),
-                                                          mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
-                    }
-                }
-
-                onClicked:
-                {
-                    if(sortieClick !== -1)
-                    {
-                        sortieClick.moveConnectorFather(0,0)
-                    }else if(timeoutClick !== -1)
-                    {
-                        timeoutClick.moveConnectorTimeout(0,0)
-                    }
-                    entreeClick = -1
-                    sortieClick = -1
-                    timeoutClick = -1
-                }
+            ScrollBar.vertical: ScrollBar {
+                parent: flickable.parent
+                anchors.top: flickable.top
+                anchors.right: flickable.right
+                anchors.bottom: flickable.bottom
+            }
+            ScrollBar.horizontal: ScrollBar {
+                parent: flickable.parent
+                anchors.left: flickable.left
+                anchors.right: flickable.right
+                anchors.bottom: flickable.bottom
             }
 
-
-            Repeater
+            Rectangle
             {
-                id:repeaterListAction
-                model:listAction
+                id:rectangle5
                 anchors.fill: parent
-                BlocAction
+                color:"transparent"
+                transform: Scale { origin.x: 0; origin.y: 0; xScale: mXScale; yScale: mYScale}
+                property int behaviorSelected:-1
+
+                MouseArea
                 {
-                    id:act
-                    x: _x
-                    y: _y
-                    Component.onCompleted:
-                    {
-                        init(_indiceAction)
-                        gestSequence.addAction(act.action)
-                        lastActionCreate = act
-                    }
-                    onEntreeClicked:
+                    propagateComposedEvents: true
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onMouseXChanged:
                     {
                         if(sortieClick !== -1)
                         {
-                            if(sortieClick.addGirlToFather(action) === true)
-                            {
-                                sortieClick.parent.addAFather()
-                            }
-                            action.addFatherToGirl(sortieClick)
+                            sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
+                                                            mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
                         }else if(timeoutClick !== -1)
                         {
-                            if(timeoutClick.addGirlToTimeout(action) === true)
-                            {
-                                timeoutClick.parent.addATimeOut()
-                            }
-                            action.addFatherToGirl(timeoutClick)
-
+                            timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather -10),
+                                                              mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
                         }
-
-                        sortieClick = -1
-                        timeoutClick = -1
-
                     }
-                    onSortieClicked:
+                    onMouseYChanged:
                     {
-                        sortieClick = action
-                        timeoutClick = -1
-                    }
-                    onTimeOutClicked:
-                    {
-                        sortieClick = -1
-                        timeoutClick = action
-                    }
-                    onHaraKiri:
-                    {
-                        for(var i = index+1 ;i < listAction.count; i++)
+                        if(sortieClick !== -1)
                         {
-                            listAction.set(i, {"index": i-1})
+                            sortieClick.moveConnectorFather(mouseX - (sortieClick.parent.x + sortieClick.xFather - 10),
+                                                            mouseY - (sortieClick.parent.y + sortieClick.yFather - 10))
+                        }else if(timeoutClick !== -1)
+                        {
+                            timeoutClick.moveConnectorTimeout(mouseX - (timeoutClick.parent.x + timeoutClick.xFather - 10),
+                                                              mouseY - (timeoutClick.parent.y + timeoutClick.yFather))
                         }
+                    }
 
-                        listAction.remove(index)
+                    onClicked:
+                    {
+                        if(sortieClick !== -1)
+                        {
+                            sortieClick.moveConnectorFather(0,0)
+                        }else if(timeoutClick !== -1)
+                        {
+                            timeoutClick.moveConnectorTimeout(0,0)
+                        }
+                        parent.focus = true
+                        entreeClick = -1
+                        sortieClick = -1
+                        timeoutClick = -1
+                    }
+                }
+
+
+                Repeater
+                {
+                    id:repeaterListAction
+                    model:listAction
+                    anchors.fill: parent
+
+
+                    BlocAction
+                    {
+                        id:act
+                        x: _x
+                        y: _y
+                        Component.onCompleted:
+                        {
+                            init(_indiceAction)
+                            gestSequence.addAction(act.action)
+                            lastActionCreate = act
+                        }
+                        onEntreeClicked:
+                        {
+                            if(sortieClick !== -1)
+                            {
+                                if(sortieClick.addGirlToFather(action) === true)
+                                {
+                                    sortieClick.parent.addAFather()
+                                }
+                                action.addFatherToGirl(sortieClick)
+                            }else if(timeoutClick !== -1)
+                            {
+                                if(timeoutClick.addGirlToTimeout(action) === true)
+                                {
+                                    timeoutClick.parent.addATimeOut()
+                                }
+                                action.addFatherToGirl(timeoutClick)
+
+                            }
+
+                            sortieClick = -1
+                            timeoutClick = -1
+
+                        }
+                        onSortieClicked:
+                        {
+                            sortieClick = action
+                            timeoutClick = -1
+                        }
+                        onTimeOutClicked:
+                        {
+                            sortieClick = -1
+                            timeoutClick = action
+                        }
+                        onHaraKiri:
+                        {
+                            for(var i = index+1 ;i < listAction.count; i++)
+                            {
+                                listAction.set(i, {"index": i-1})
+                            }
+                            gestSequence.eraseAction(act.action)
+                            listAction.remove(index)
+                        }
                     }
                 }
             }

@@ -128,23 +128,22 @@ Item {
                             anchors.fill: parent
                             z:1
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            property var step: 0
                             onClicked:
                             {
-                                step = gestEtape.getEtape(index)
+                                console.log(gestEtape.getNomEtape(index))
                                 rectangle5.updateColor(index)
                                 etapeEnCours = -1
-                                textFieldNomEtape.text = step.nomEtape
-                                textFieldNbPoints.text = step.nbPoints
-                                textFieldTpsMoyen.text = step.tempsMoyen
-                                textFieldTpsMax.text = step.tempsMax
-                                textFieldDateMax.text = step.dateMax
-                                textFieldDeadline.text = step.deadline
-                                rectangleColor.color = step.color
+                                textFieldNomEtape.text = gestEtape.getNomEtape(index)
+                                textFieldNbPoints.text = gestEtape.getNbPointEtape(index)
+                                textFieldTpsMoyen.text = gestEtape.getTempsMoyenEtape(index)
+                                textFieldTpsMax.text = gestEtape.getTempsMaxEtape(index)
+                                textFieldDateMax.text = gestEtape.getDateMaxEtape(index)
+                                textFieldDeadline.text = gestEtape.getNomEtape(index)
+                                rectangleColor.color = gestEtape.getColorEtape(index)
                                 controlSequence.currentIndex = 0;
                                 for(var i = 0; i < folderModel.count; i++)
                                 {
-                                    if(folderModel.get(i, "fileName") === step.nameSequence)
+                                    if(folderModel.get(i, "fileName") === gestEtape.getNomSequenceEtape(index))
                                     {
                                         controlSequence.currentIndex = i;
                                         break;

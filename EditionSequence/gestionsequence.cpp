@@ -14,6 +14,11 @@ void GestionSequence::addAction( EditableAction * act)
     listAction.append(act);
 }
 
+void GestionSequence::eraseAction( EditableAction * act)
+{
+    listAction.removeAll(act);
+}
+
 void GestionSequence::save(QString nomFile)
 {
     QFile saveFile("data/Sequence/"+ nomFile +".json");

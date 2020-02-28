@@ -20,6 +20,46 @@ Etape* GestionEtape::getEtape(int indice)
     return listEtape.at(indice);
 }
 
+QString GestionEtape::getNomEtape(int indice)
+{
+    return getEtape(indice)->getNomEtape();
+}
+
+int GestionEtape::getNbPointEtape(int indice)
+{
+    return getEtape(indice)->getNbPoints();
+}
+
+int GestionEtape::getTempsMoyenEtape(int indice)
+{
+    return getEtape(indice)->getTempsMoyen();
+}
+
+int GestionEtape::getTempsMaxEtape(int indice)
+{
+    return getEtape(indice)->getTempsMax();
+}
+
+int GestionEtape::getDateMaxEtape(int indice)
+{
+    return getEtape(indice)->getDateMax();
+}
+
+int GestionEtape::getDeadLineEtape(int indice)
+{
+    return getEtape(indice)->getDeadline();
+}
+
+QString GestionEtape::getColorEtape(int indice)
+{
+    return getEtape(indice)->getColor();
+}
+
+QString GestionEtape::getNomSequenceEtape(int indice)
+{
+    return getEtape(indice)->getNameSequence();
+}
+
 int GestionEtape::getIndiceEtape(Etape * etape)
 {
     return listEtape.indexOf(etape);

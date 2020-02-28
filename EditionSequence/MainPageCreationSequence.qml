@@ -29,6 +29,8 @@ Item {
         anchors.rightMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
+        anchors.left: pannelAction.right
+        anchors.leftMargin: 0
         onAddSequence:listOnglet.append({"_nom":"new"})
         onSave:sequenceEnCours.save(nomFile)
         onOpen:

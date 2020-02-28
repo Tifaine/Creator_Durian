@@ -16,6 +16,16 @@ public:
 public slots:
     void addEtape(Etape* etape);
     Etape* getEtape(int indice);
+
+    QString getNomEtape(int indice);
+    int getNbPointEtape(int indice);
+    int getTempsMoyenEtape(int indice);
+    int getTempsMaxEtape(int indice);
+    int getDateMaxEtape(int indice);
+    int getDeadLineEtape(int indice);
+    QString getColorEtape(int indice);
+    QString getNomSequenceEtape(int indice);
+
     int getIndiceEtape(Etape * etape);
     int getNbEtape();
     void createNewEtape();
