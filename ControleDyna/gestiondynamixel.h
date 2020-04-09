@@ -4,44 +4,31 @@
 #include <QObject>
 #include <QList>
 #include <QMap>
-
-typedef struct dyna
-{
-    int id;
-    int value;
-    int speed;
-    QString name;
-}dyna;
+#include "dyna.h"
+#include "../mqttclient.h"
 
 class GestionDynamixel : public QObject
 {
     Q_OBJECT
 public:
-    explicit GestionDynamixel(QObject *parent = nullptr);
+    explicit GestionDynamixel(mqttClient* client, QObject *parent = nullptr);
 
 public slots:
-    int getNbDyna();
-    int getIdDyna(int indice);
-    int getValueDyna(int indice);
-    int getSpeedDyna(int indice);
-    QString getNameDyna(int indice);
+    void addDyna(Dyna * dyna);
+    void getValue(Dyna * dyna);
+    void setValue(Dyna * dyna);
+    void publishGetListDyna();
 
-    void setValueDyna(int indice, int value);
-    void setVitesseDyna(int indice, int value);
-
-    void saveDyna(int indice);
-    void updateListDyna();
+private slots:
+    void listDynaMqtt(QString);
+    void infoDynaMqtt(QString);
 
 signals:
-    void listDynaUpdated();
+    void ajoutDyna(int id);
 
 private:
-    void init();
-private:
-    QList<dyna *> listDyna;
-    QMap<int, QString> mapDyna;
-
-signals:
+    mqttClient *m_clientMqtt;
+    QList < Dyna * > listDyna;
 
 };
 

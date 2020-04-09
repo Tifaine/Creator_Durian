@@ -33,6 +33,7 @@
 #include <QtQml/QQmlEngine>
 #include "ControleRoboclaw/gestionroboclaw.h"
 #include "ControleDyna/gestiondynamixel.h"
+#include "ControleDyna/dyna.h"
 #include "EditionStrategie/etape.h"
 #include "EditionStrategie/itemtaux.h"
 #include "EditionStrategie/gestionetape.h"
@@ -43,6 +44,7 @@
 #include "EditionSequence/gestionsequence.h"
 #include "EditionSequence/Components/connector.h"
 #include <QQmlContext>
+#include "mqttclient.h"
 
 void initRep();
 
@@ -52,11 +54,12 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     initRep();
     GestionRoboclaw roboclaw;
-    GestionDynamixel dynamixel;
     GestionEtape gestEtape;
     GestionStrategie gestStrat;
     GestionAction gestAction;
     QQuickView viewer;
+    mqttClient client;
+    GestionDynamixel dynamixel(&client);
 
     // The following are needed to make examples run without having to install the module
     // in desktop environments.
@@ -72,6 +75,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<EditableAction>("editableAction", 1, 0, "EditableAction");
     qmlRegisterType<Connector>("connector", 1, 0, "Connector");
     qmlRegisterType<GestionSequence>("gestionSequence", 1, 0, "GestionSequence");
+    qmlRegisterType<Dyna>("dyna", 1, 0, "Dyna");
 
     viewer.setTitle(QStringLiteral("Creator Durian"));
     viewer.engine()->rootContext()->setContextProperty("gestRoboclaw", &roboclaw);

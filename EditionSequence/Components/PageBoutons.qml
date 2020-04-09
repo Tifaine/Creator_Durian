@@ -160,7 +160,7 @@ Item {
     FolderListModel
     {
         id: folderModel
-        folder:"file:///"+applicationDirPath+"/data/Sequence/"
+        folder:"file://"+applicationDirPath+"/data/Sequence/"
         nameFilters: ["*.json"]
         showDirs: false
     }

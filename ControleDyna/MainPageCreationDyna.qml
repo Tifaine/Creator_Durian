@@ -2,32 +2,31 @@ import QtQuick 2.12
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
+import dyna 1.0
 
 Item {
     id:element
     width: 1500
     height: 800
-    property int dynaSelected : -1
+    property var dynaSelected : -1
 
     ListModel
     {
         id:listDyna
         ListElement{ index : 0; _color:"#00ffffff"; value: 0; iddyna : 0; speedDyna : 0}
-        ListElement{ index : 1; _color:"#00ffffff"; value: 0; iddyna : 0; speedDyna : 0}
     }
-
-    Component.onCompleted: gestDynamixel.updateListDyna();
+    Component.onCompleted:
+    {
+        listDyna.clear()
+    }
 
     Connections
     {
         target:gestDynamixel
-        onListDynaUpdated:
+
+        onAjoutDyna:
         {
-            listDyna.clear()
-            for( var i = 0; i < gestDynamixel.getNbDyna(); i++)
-            {
-                listDyna.append({index:i, _color:"#00ffffff", value:gestDynamixel.getValueDyna(i), iddyna:gestDynamixel.getIdDyna(i), speedDyna:gestDynamixel.getSpeedDyna(i)})
-            }
+            listDyna.append({index : listDyna.count,_color:"#00ffffff", value: 0, iddyna : id, speedDyna : 0})
         }
     }
 
@@ -91,6 +90,19 @@ Item {
                     anchors.top: repeaterListDyna.top
                     anchors.topMargin: 5
 
+                    Dyna
+                    {
+                        id:dyna
+                        nom:"Dyna"+iddyna
+                        mValue: value
+                        mid:iddyna
+                        vitesse: speedDyna
+                        Component.onCompleted: gestDynamixel.addDyna(dyna);
+
+                        onValueChanged: textFieldValue.text = mValue
+                        onVitesseChanged: textFieldSpeed.text = vitesse
+                    }
+
 
                     Rectangle
                     {
@@ -107,7 +119,7 @@ Item {
                         anchors.topMargin: 3
                         Text {
                             id: nomDyna
-                            text: gestDynamixel.getNbDyna()>0 ? gestDynamixel.getNameDyna(index) : ""
+                            text: dyna.nom
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.top: parent.top
@@ -127,18 +139,18 @@ Item {
                             onClicked:
                             {
                                 rectangle5.updateColor(index)
-                                dynaSelected = index
-                                textFieldID.text = gestDynamixel.getIdDyna(index)
-                                textFieldNom.text = gestDynamixel.getNameDyna(index)
-                                textFieldValue.text = gestDynamixel.getValueDyna(index)
-                                dial.value = gestDynamixel.getValueDyna(index)
-                                sliderSpeed.value = gestDynamixel.getSpeedDyna(index)
+                                gestDynamixel.getValue(dyna)
+                                dynaSelected = dyna
+                                textFieldID.text = dyna.mid
+                                textFieldNom.text = dyna.nom
+                                /*textFieldSpeed.text = dyna.vitesse
+                                textFieldValue.text = dyna.mValue*/
                             }
                         }
 
                         Text {
                             id: textIdDyna
-                            text: "ID : "+iddyna
+                            text: "ID : "+dyna.mid
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.top: nomDyna.bottom
@@ -149,7 +161,7 @@ Item {
 
                         Text {
                             id: textValueDyna
-                            text: "Value : "+value
+                            text: "Value : "+dyna.mValue
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.top: textIdDyna.bottom
@@ -160,7 +172,7 @@ Item {
 
                         Text {
                             id: textSpeedDyna
-                            text: "Vitesse : "+speedDyna
+                            text: "Vitesse : "+dyna.vitesse
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.top: textValueDyna.bottom
@@ -260,7 +272,7 @@ Item {
 
     TextField {
         id: textFieldValue
-        text: dynaSelected !== -1 ? gestDynamixel.getValueDyna(dynaSelected):0
+        text: dynaSelected !== -1 ? dynaSelected.mValue:0
         anchors.left: textValue.right
         anchors.leftMargin: 19
         anchors.top: textFieldNom.bottom
@@ -297,18 +309,9 @@ Item {
         anchors.topMargin: 30
         anchors.right: parent.right
         anchors.rightMargin: 30
-    }
-
-    Button {
-        id: buttonSave
-        text: qsTr("Enregistrer dyna")
-        anchors.left: textFieldID.right
-        anchors.leftMargin: 100
-        anchors.top: rectangle1.bottom
-        anchors.topMargin: 35
         onClicked:
         {
-            gestDynamixel.saveDyna(dynaSelected)
+            gestDynamixel.publishGetListDyna()
         }
     }
 
@@ -325,9 +328,9 @@ Item {
         font.bold: true
         onClicked:
         {
-            gestDynamixel.setValueDyna(dynaSelected, gestDynamixel.getValueDyna(dynaSelected) - 1)
-            textFieldValue.text = gestDynamixel.getValueDyna(dynaSelected)
-            dial.value = gestDynamixel.getValueDyna(dynaSelected)
+            dynaSelected.mValue = dynaSelected.mValue - 1
+            textFieldValue.text = dynaSelected.mValue
+            dial.value = dynaSelected.mValue
         }
     }
 
@@ -345,9 +348,9 @@ Item {
         font.bold: true
         onClicked:
         {
-            gestDynamixel.setValueDyna(dynaSelected, gestDynamixel.getValueDyna(dynaSelected) + 1)
-            textFieldValue.text = gestDynamixel.getValueDyna(dynaSelected)
-            dial.value = gestDynamixel.getValueDyna(dynaSelected)
+            dynaSelected.mValue = dynaSelected.mValue + 1
+            textFieldValue.text = dynaSelected.mValue
+            dial.value = dynaSelected.mValue
         }
     }
 
@@ -355,9 +358,9 @@ Item {
         id: dial
         width: 150
         height: 150
-        value:dynaSelected !== -1 ? gestDynamixel.getValueDyna(dynaSelected):0
+        value:dynaSelected !== -1 ? dynaSelected.mValue:0
         stepSize: 1
-        to: 320
+        to: 1023
         anchors.left: buttonMoins.left
         anchors.leftMargin: 0
         anchors.top: buttonMoins.bottom
@@ -366,9 +369,9 @@ Item {
         {
             if(dynaSelected !== -1)
             {
-                gestDynamixel.setValueDyna(dynaSelected, parseInt(value))
-                textFieldValue.text = gestDynamixel.getValueDyna(dynaSelected)
-                listDyna.set(dynaSelected,{value:parseInt(value)})
+                dynaSelected.mValue = parseInt(value)
+                textFieldValue.text = dynaSelected.mValue
+                gestDynamixel.setValue(dynaSelected)
             }
         }
 
@@ -428,7 +431,7 @@ Item {
         x: 0
         y: 0
         color: "#ffffff"
-        text: dynaSelected !== -1 ? gestDynamixel.getSpeedDyna(dynaSelected):0
+        text: dynaSelected !== -1 ? dynaSelected.vitesse:0
         anchors.right: sliderSpeed.right
         anchors.rightMargin: 0
         anchors.top: textFieldNom.bottom
@@ -466,9 +469,9 @@ Item {
         font.bold: true
         onClicked:
         {
-            gestDynamixel.setVitesseDyna(dynaSelected, gestDynamixel.getSpeedDyna(dynaSelected) - 1)
-            textFieldSpeed.text = gestDynamixel.getSpeedDyna(dynaSelected)
-            sliderSpeed.value = gestDynamixel.getSpeedDyna(dynaSelected)
+            dynaSelected.vitesse = dynaSelected.vitesse - 1
+            textFieldSpeed.text = dynaSelected.vitesse
+            sliderSpeed.value = dynaSelected.vitesse
         }
     }
 
@@ -487,9 +490,9 @@ Item {
         font.bold: true
         onClicked:
         {
-            gestDynamixel.setVitesseDyna(dynaSelected, gestDynamixel.getSpeedDyna(dynaSelected) + 1)
-            textFieldSpeed.text = gestDynamixel.getSpeedDyna(dynaSelected)
-            sliderSpeed.value = gestDynamixel.getSpeedDyna(dynaSelected)
+            dynaSelected.vitesse = dynaSelected.vitesse + 1
+            textFieldSpeed.text = dynaSelected.vitesse
+            sliderSpeed.value = dynaSelected.vitesse
         }
     }
 
@@ -506,9 +509,10 @@ Item {
         {
             if(dynaSelected !== -1)
             {
-                gestDynamixel.setVitesseDyna(dynaSelected, parseInt(value))
-                textFieldSpeed.text = gestDynamixel.getSpeedDyna(dynaSelected)
-                listDyna.set(dynaSelected,{speedDyna:parseInt(value)})
+                dynaSelected.vitesse = parseInt(value)
+                textFieldSpeed.text = dynaSelected.vitesse
+
+
             }
         }
     }
@@ -520,9 +524,8 @@ Designer {
 D{i:19;anchors_x:26;anchors_y:215}D{i:18;anchors_x:85;anchors_y:132}D{i:20;anchors_x:85;anchors_y:203}
 D{i:22;anchors_x:85;anchors_y:273}D{i:21;anchors_x:26;anchors_y:285}D{i:23;anchors_x:26;anchors_y:133}
 D{i:25;anchors_x:77;anchors_y:329}D{i:24;anchors_x:363;anchors_y:141}D{i:26;anchors_y:329}
-D{i:27;anchors_x:93;anchors_y:411}D{i:28;anchors_x:77;anchors_y:329}D{i:29;anchors_y:329}
-D{i:30;anchors_x:93;anchors_y:411}D{i:35;anchors_x:26;anchors_y:133}D{i:37;anchors_x:77;anchors_y:329}
-D{i:36;anchors_width:150;anchors_x:363;anchors_y:141}D{i:38;anchors_x:77;anchors_y:329}
-D{i:39;anchors_y:329}
+D{i:27;anchors_x:93;anchors_y:411}D{i:28;anchors_x:77;anchors_y:329}D{i:30;anchors_x:93;anchors_y:411}
+D{i:29;anchors_y:329}D{i:36;anchors_width:150;anchors_x:363;anchors_y:141}D{i:35;anchors_x:26;anchors_y:133}
+D{i:37;anchors_x:77;anchors_y:329}D{i:38;anchors_x:77;anchors_y:329}D{i:39;anchors_y:329}
 }
 ##^##*/

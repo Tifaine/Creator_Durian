@@ -23,7 +23,7 @@ Item {
         anchors.bottomMargin: 100
         anchors.topMargin: 100
         anchors.fill: parent
-        source: "file:///" + applicationDirPath + "/data/table.png"
+        source: "file://" + applicationDirPath + "/data/table.png"
     }
 
     ListModel
