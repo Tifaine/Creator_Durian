@@ -13,7 +13,7 @@ Item {
     Connections
     {
         target:gestAction
-        onActionsUpdated:
+        function onActionsUpdated()
         {
             listAction.clear()
             for(var i = 0; i < gestAction.getNbAction(); i++)

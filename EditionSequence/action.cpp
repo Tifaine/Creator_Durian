@@ -116,7 +116,7 @@ void Action::save()
     QFile saveFile("data/Sequence/Action/"+ getNomAction() +".json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<saveFile.fileName();
     }else
     {
         saveFile.flush();

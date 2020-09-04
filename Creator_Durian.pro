@@ -1,5 +1,8 @@
-QT += quick charts network mqtt
+QT += quick charts network
 
+unix{
+    QT += mqtt
+}
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -25,6 +28,9 @@ SOURCES += \
         EditionStrategie/gestionetape.cpp \
         EditionStrategie/gestionstrategie.cpp \
         EditionStrategie/itemtaux.cpp \
+        EditionStrategie/position.cpp \
+        Simulation/gestionsimulation.cpp \
+        Simulation/threaddeplacement.cpp \
         clientmqtt.cpp \
         EditionSequence/Components/connector.cpp \
         main.cpp \
@@ -56,6 +62,9 @@ HEADERS += \
     EditionStrategie/gestionetape.h \
     EditionStrategie/gestionstrategie.h \
     EditionStrategie/itemtaux.h \
+    EditionStrategie/position.h \
+    Simulation/gestionsimulation.h \
+    Simulation/threaddeplacement.h \
     clientmqtt.h \
     EditionSequence/Components/connector.h \
     mqttclient.h \

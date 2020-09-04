@@ -26,7 +26,7 @@ void GestionAction::updateAction()
         QFile loadFile("data/Sequence/Action/"+list.at(i).fileName());
         if(!loadFile.open(QIODevice::ReadOnly))
         {
-            qDebug()<<"Failed !";
+            qDebug()<<"Failed ! "<<loadFile.fileName();
         }else
         {
             QByteArray saveData = loadFile.readAll();

@@ -4,30 +4,26 @@ import QtQuick.Controls 2.13
 
 Item {
     id: element
-    height:800
-    width:100
+    height:100
+    width: 900
     signal changeAffichage(var nb)
     property int indiceAffiche:0
-    Column {
-        id: column
-        width: 100
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
+
+    Component.onCompleted:
+    {
+        console.log(row.width / listModel.count, row.width, listModel.count)
+    }
+
+    Row {
+        id: row
+        anchors.fill: parent
 
         ListModel
         {
-            id:listModel            
-            ListElement{ _nom:"Définir Stratégie" ;     index : 0 }
-            ListElement{ _nom:"Édition étape" ;         index : 1 }
-            ListElement{ _nom:"Édition Sequence" ;      index : 2 }
-            ListElement{ _nom:"Édition Action" ;        index : 3 }
-            ListElement{ _nom:"Réglages Roboclaw" ;     index : 4 }
-            ListElement{ _nom:"Réglages Dynamixel" ;    index : 5 }
-            ListElement{ _nom:"Simulation" ;            index : 6 }
+            id:listModel
+            ListElement{ _nom:"Afficher étapes"   ; index : 0 }
+            ListElement{ _nom:"Afficher positions"; index : 1 }
+            ListElement{ _nom:"Afficher les deux" ; index : 2 }
         }
 
         Repeater
@@ -36,10 +32,10 @@ Item {
             model:listModel
             anchors.fill: parent
 
-            ColumnLayout {
+            RowLayout {
                 id: rowLayout
-                width: 100
-                height: column.height/listModel.count
+                width: row.width/listModel.count
+                height: 100
 
                 MouseArea
                 {

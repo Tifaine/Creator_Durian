@@ -8,6 +8,8 @@
 #include <QJsonObject>
 #include "itemtaux.h"
 
+class Position;
+
 class Etape : public QQuickItem
 {
     Q_OBJECT
@@ -35,6 +37,9 @@ public:
     void loadObject(QJsonObject);
 
 
+    bool getIsDone() const;
+    void setIsDone(bool value);
+
 signals:
     void nomEtapeChanged();
     void nbPointsChanged();
@@ -46,6 +51,7 @@ signals:
     void yModified();
     void colorChanged();
     void nameSequenceChanged();
+    void hide();
 
 public slots:
     void setNomEtape(const QString &value);
@@ -85,6 +91,11 @@ public slots:
 
     void save();
 
+    bool containsPosition(Position* mPos);
+    int getNbPositionLiee();
+    void addPositionLiee(Position* mPos);
+    Position* getPosition(int _index);
+
 private:
     QString nomEtape;
     int nbPoints;
@@ -96,8 +107,10 @@ private:
     int y;
     QString color;
     QString nameSequence;
+    bool isDone;
 
     QList<ItemTaux *> listTaux;
+    QList<Position *> listPositionsLiees;
 
 };
 

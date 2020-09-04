@@ -15,7 +15,10 @@ Item {
     Connections
     {
         target: gestEtape
-        onStepUpdated: updateEtape()
+        function onStepUpdated()
+        {
+            updateEtape()
+        }
     }
 
     ListModel
@@ -546,7 +549,7 @@ Item {
     FolderListModel
     {
         id: folderModel
-        folder:"file://"+applicationDirPath+"/data/Sequence/"
+        folder:fileRoot+applicationDirPath+"/data/Sequence/"
         nameFilters: ["*.json"]
         showDirs: false
     }
@@ -596,7 +599,10 @@ Item {
 
             Connections {
                 target: controlSequence
-                onPressedChanged: canvas.requestPaint()
+                function onPressedChanged()
+                {
+                    canvas.requestPaint()
+                }
             }
 
             onPaint: {

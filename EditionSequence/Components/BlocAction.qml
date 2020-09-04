@@ -286,7 +286,15 @@ Item {
                 Connections
                 {
                     target:gestSequence
-                    onListFilesChanged:updateListAliasForSequence()
+                    function onListFilesChanged()
+                    {
+                        updateListAliasForSequence()
+                    }
+                }
+
+                function onListFilesChanged()
+                {
+
                 }
 
                 function updateListAliasForSequence()
@@ -352,7 +360,10 @@ Item {
 
                         Connections {
                             target: controlAlias
-                            onPressedChanged: canvas.requestPaint()
+                            function onPressedChanged()
+                            {
+                                canvas.requestPaint()
+                            }
                         }
 
                         onPaint: {

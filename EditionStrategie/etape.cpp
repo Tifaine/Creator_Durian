@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include "position.h"
 
 Etape::Etape() :
     nbPoints(0),
@@ -11,7 +12,8 @@ Etape::Etape() :
     dateMax(0),
     deadline(0),
     x(0),
-    y(0)
+    y(0),
+    isDone(false)
 {
 
 }
@@ -131,7 +133,7 @@ void Etape::save()
     QFile saveFile("data/Etape/"+ getNomEtape() +".json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<saveFile.fileName();
     }else
     {
         saveFile.flush();
@@ -145,6 +147,44 @@ void Etape::save()
     }
 
     saveFile.close();
+}
+
+bool Etape::containsPosition(Position* mPos)
+{
+    return listPositionsLiees.contains(mPos);
+}
+
+void Etape::addPositionLiee(Position* mPos)
+{
+    listPositionsLiees.append(mPos);
+}
+
+int Etape::getNbPositionLiee()
+{
+    return listPositionsLiees.count();
+}
+
+Position* Etape::getPosition(int _index)
+{
+    if (getNbPositionLiee() > _index)
+    {
+        return listPositionsLiees.at(_index);
+    }
+    return NULL;
+}
+
+bool Etape::getIsDone() const
+{
+    return isDone;
+}
+
+void Etape::setIsDone(bool value)
+{
+    isDone = value;
+    if(value)
+    {
+        emit hide();
+    }
 }
 
 QJsonObject Etape::saveEtape()
@@ -184,6 +224,7 @@ QJsonObject Etape::saveEtape()
 
 void Etape::loadObject(QJsonObject json)
 {
+
     if(json.contains("nomEtape") )
     {
         setNomEtape(json["nomEtape"].toString());

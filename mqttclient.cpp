@@ -3,6 +3,7 @@
 
 mqttClient::mqttClient(QObject *parent) : QObject(parent)
 {
+#ifdef Q_OS_LINUX
     m_client = new QMqttClient(this);
     m_client->setHostname("127.0.0.1");
     m_client->setPort(1883);
@@ -10,28 +11,30 @@ mqttClient::mqttClient(QObject *parent) : QObject(parent)
     connect(m_client, &QMqttClient::stateChanged, this, &mqttClient::updateLogStateChange);
 
     m_client->connectToHost();
+#endif
 
-    /*
-    */
 }
 
 void mqttClient::pub_message(QString topic, QString payload)
 {
+#ifdef Q_OS_LINUX
     m_client->publish(topic, payload.toUtf8());
+#endif
 }
 
 void mqttClient::sub_topic(QString topic)
 {
-    //
+#ifdef Q_OS_LINUX
     if( m_client->state() == QMqttClient::Connected)
     {
-        // connect(listSub.last(), &QMqttSubscription::messageReceived, this, &mqttClient::updateMessage);
+        connect(listSub.last(), &QMqttSubscription::messageReceived, this, &mqttClient::updateMessage);
     }else
     {
         listEnAttente.append(topic);
     }
+#endif
 }
-
+#ifdef Q_OS_LINUX
 void mqttClient::updateMessage(const QMqttMessage &msg)
 {
     qDebug()<<msg.topic().name()<<" "<<msg.payload();
@@ -43,6 +46,7 @@ void mqttClient::updateMessage(const QMqttMessage &msg)
         emit valueDyna( msg.payload());
     }
 }
+
 
 void mqttClient::updateStatus(QMqttSubscription::SubscriptionState state)
 {
@@ -63,3 +67,4 @@ void mqttClient::updateLogStateChange()
         listEnAttente.clear();
     }
 }
+#endif

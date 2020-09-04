@@ -3,9 +3,9 @@
 
 #include <QObject>
 #include <QList>
-#include <QtMqtt/QMqttClient>
-#include <QtMqtt/QMqttMessage>
-#include <QtMqtt/QMqttSubscription>
+//#include <QtMqtt/QMqttClient>
+//#include <QtMqtt/QMqttMessage>
+//#include <QtMqtt/QMqttSubscription>
 
 class mqttClient : public QObject
 {
@@ -15,7 +15,7 @@ public:
     void pub_message(QString topic, QString payload);
     void sub_topic(QString topic);
 
-
+#ifdef Q_OS_LINUX
 private slots:
     void updateMessage(const QMqttMessage &msg);
     void updateStatus(QMqttSubscription::SubscriptionState state);
@@ -28,7 +28,7 @@ private:
     QMqttClient* m_client;
     QList< QString > listEnAttente;
     QList<QMqttSubscription *> listSub;
-
+#endif
 };
 
 #endif // MQTTCLIENT_H

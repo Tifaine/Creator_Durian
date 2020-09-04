@@ -10,7 +10,7 @@ Item {
     Connections
     {
         target:gestRoboclaw
-        onInitDone:
+        function onInitDone()
         {
             textFieldQPPSMaxG.text = gestRoboclaw.getQPPSMaxG()
             textFieldQPPSMaxD.text = gestRoboclaw.getQPPSMaxD()

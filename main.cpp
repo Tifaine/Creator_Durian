@@ -35,6 +35,7 @@
 #include "ControleDyna/gestiondynamixel.h"
 #include "ControleDyna/dyna.h"
 #include "EditionStrategie/etape.h"
+#include "EditionStrategie/position.h"
 #include "EditionStrategie/itemtaux.h"
 #include "EditionStrategie/gestionetape.h"
 #include "EditionStrategie/gestionstrategie.h"
@@ -43,6 +44,7 @@
 #include "EditionSequence/gestionaction.h"
 #include "EditionSequence/gestionsequence.h"
 #include "EditionSequence/Components/connector.h"
+#include "Simulation/gestionsimulation.h"
 #include <QQmlContext>
 #include "mqttclient.h"
 
@@ -60,6 +62,7 @@ int main(int argc, char *argv[])
     QQuickView viewer;
     mqttClient client;
     GestionDynamixel dynamixel(&client);
+    GestionSimulation gestSimu;
 
     // The following are needed to make examples run without having to install the module
     // in desktop environments.
@@ -71,6 +74,7 @@ int main(int argc, char *argv[])
     QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
 
     qmlRegisterType<Etape>("etape", 1, 0, "Etape");
+    qmlRegisterType<Position>("position", 1, 0, "Position");
     qmlRegisterType<Action>("action", 1, 0, "Action");
     qmlRegisterType<EditableAction>("editableAction", 1, 0, "EditableAction");
     qmlRegisterType<Connector>("connector", 1, 0, "Connector");
@@ -83,7 +87,17 @@ int main(int argc, char *argv[])
     viewer.engine()->rootContext()->setContextProperty("gestEtape", &gestEtape);
     viewer.engine()->rootContext()->setContextProperty("gestStrat", &gestStrat);
     viewer.engine()->rootContext()->setContextProperty("gestAction", &gestAction);
+    viewer.engine()->rootContext()->setContextProperty("gestSimu", &gestSimu);
+
+#ifdef Q_OS_LINUX
+    viewer.engine()->rootContext()->setContextProperty("fileRoot", "file://");
+
+#elif defined(Q_OS_WIN)
+    viewer.engine()->rootContext()->setContextProperty("fileRoot", "file:///");
+
+#endif
     viewer.engine()->rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
+
     viewer.setSource(QUrl("qrc:/main.qml"));
     viewer.setResizeMode(QQuickView::SizeRootObjectToView);
     viewer.show();

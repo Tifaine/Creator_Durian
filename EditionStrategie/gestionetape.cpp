@@ -99,7 +99,7 @@ void GestionEtape::updateEtape()
         QFile loadFile("data/Etape/"+list.at(i).fileName());
         if(!loadFile.open(QIODevice::ReadOnly))
         {
-            qDebug()<<"Failed !";
+            qDebug()<<"Failed ! updateEtape";
         }else
         {
             QByteArray saveData = loadFile.readAll();

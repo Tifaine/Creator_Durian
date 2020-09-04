@@ -6,27 +6,27 @@ ThreadMQTT::ThreadMQTT(const char *id, const char *host, int port):
     mHost(host),
     mPort(port)
 {
-   /* cli = new clientMQTT(mId, mHost, mPort);
-    connect(cli, SIGNAL(isConnected()), this, SIGNAL(onConnect()));
-    connect(cli, SIGNAL(onMessage(QString, QString)), this, SLOT(onMessageFromMQTT(QString, QString)));
-    timer = new QTimer();
-    connect(timer, &QTimer::timeout, this, QOverload<>::of(&ThreadMQTT::updatePublish));
-    timer->start(20);*/
+//    cli = new clientMQTT(mId, mHost, mPort);
+//    connect(cli, SIGNAL(isConnected()), this, SIGNAL(onConnect()));
+//    connect(cli, SIGNAL(onMessage(QString, QString)), this, SLOT(onMessageFromMQTT(QString, QString)));
+//    timer = new QTimer();
+//    connect(timer, &QTimer::timeout, this, QOverload<>::of(&ThreadMQTT::updatePublish));
+//    timer->start(20);
 }
 
 void ThreadMQTT::run()
 {
-   // cli->start();
+    //cli->start();
 }
 
 void ThreadMQTT::publishMessage(QString topic, QString message)
 {    
- //   cli->publishMessage(topic, message);
+    //   cli->publishMessage(topic, message);
 }
 
 void ThreadMQTT::subscribeTo(QString topic)
 {
-  //  cli->subscribeTo( topic );
+    //  cli->subscribeTo( topic );
 }
 
 void ThreadMQTT::onMessageFromMQTT(QString topic, QString message)

@@ -6,6 +6,7 @@ import "ControleRoboclaw"
 import "EditionStrategie"
 import "EditionSequence"
 import "ControleDyna"
+import "Simulation"
 
 Item {
     visible: true
@@ -71,6 +72,7 @@ Item {
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
                     mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = false
                     break;
                 case 1:
                     mainPageRoboclaw.visible=false
@@ -79,6 +81,7 @@ Item {
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
                     mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = false
                     break;
                 case 2:
                     mainPageRoboclaw.visible=false
@@ -87,6 +90,7 @@ Item {
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = true
                     mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = false
                     break;
                 case 3:
                     mainPageRoboclaw.visible=false
@@ -95,6 +99,7 @@ Item {
                     mainPageCreationAction.visible=true
                     mainPageCreationSequence.visible = false
                     mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = false
                     break;
                 case 4:
                     mainPageRoboclaw.visible=true
@@ -103,6 +108,7 @@ Item {
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
                     mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = false
                     break;
                 case 5:
                     mainPageRoboclaw.visible=false
@@ -111,7 +117,18 @@ Item {
                     mainPageCreationAction.visible=false
                     mainPageCreationSequence.visible = false
                     mainPageCreationDyna.visible = true
+                    mainPageSimu.visible = false
                     break;
+                case 6 :
+                    mainPageRoboclaw.visible=false
+                    mainPageEditionStrat.visible=false
+                    editeurEtape.visible=false
+                    mainPageCreationAction.visible=false
+                    mainPageCreationSequence.visible = false
+                    mainPageCreationDyna.visible = false
+                    mainPageSimu.visible = true
+                    break;
+
                 }
             }
 
@@ -176,6 +193,21 @@ Item {
 
         MainPageCreationDyna {
             id: mainPageCreationDyna
+            visible: false
+
+            anchors.left: choixOngletSide.right
+            anchors.leftMargin: 0
+
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+        }
+
+        MainPageSimu {
+            id: mainPageSimu
             visible: false
 
             anchors.left: choixOngletSide.right

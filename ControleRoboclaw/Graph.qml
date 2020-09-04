@@ -10,7 +10,7 @@ Item {
     Connections
     {
         target:gestRoboclaw
-        onVitesseGaucheChanged:
+        function onVitesseGaucheChanged(value)
         {
 
 
@@ -42,7 +42,7 @@ Item {
                 scaleAxisYTop.min = value
             }
         }
-        onVitesseDroitChanged:
+        function onVitesseDroitChanged(value)
         {
 
             if(indexDepaceD === false)

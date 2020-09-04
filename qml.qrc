@@ -15,5 +15,12 @@
         <file>EditionSequence/Components/BlocAction.qml</file>
         <file>EditionSequence/Components/Sequence.qml</file>
         <file>ControleDyna/MainPageCreationDyna.qml</file>
+        <file>Simulation/MainPageSimu.qml</file>
+        <file>Simulation/SimuDashBoard.qml</file>
+        <file>EditionStrategie/oldMainPage.qml</file>
+        <file>ElementQML/SelecteurOngletVertical.qml</file>
+        <file>EditionStrategie/PageEditionStrat.qml</file>
+        <file>EditionStrategie/PageParametreEtape.qml</file>
+        <file>EditionStrategie/PageParametrePosition.qml</file>
     </qresource>
 </RCC>

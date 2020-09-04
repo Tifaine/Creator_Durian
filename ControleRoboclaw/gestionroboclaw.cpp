@@ -270,7 +270,7 @@ void GestionRoboclaw::saveParam()
     QFile saveFile("data/config.json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed RClaw!";
     }else
     {
         saveFile.flush();
@@ -300,7 +300,7 @@ void GestionRoboclaw::init()
     QFile loadFile("data/config.json");
     if(!loadFile.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! rclaw bis";
     }else
     {
         QByteArray saveData = loadFile.readAll();

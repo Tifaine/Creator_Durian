@@ -24,7 +24,7 @@ void GestionSequence::save(QString nomFile)
     QFile saveFile("data/Sequence/"+ nomFile +".json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<saveFile.fileName();
     }else
     {
         saveFile.flush();
@@ -94,7 +94,7 @@ void GestionSequence::open(QString nomFile)
     QFile loadFile("data/Sequence/"+nomFile);
     if(!loadFile.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<loadFile.fileName();
     }else
     {
         QByteArray saveData = loadFile.readAll();

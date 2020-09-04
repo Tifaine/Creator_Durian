@@ -46,7 +46,7 @@ void GestionStrategie::saveStrategie(QString nomFile)
     QFile saveFile("data/Strategie/"+ nomFile +".json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<Q_FUNC_INFO;
     }else
     {
         saveFile.flush();
@@ -97,7 +97,7 @@ void GestionStrategie::openStrat(QString nomStrat)
     QFile loadFile("data/Strategie/"+nomStrat+".json");
     if(!loadFile.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<Q_FUNC_INFO;
     }else
     {
         QByteArray saveData = loadFile.readAll();
@@ -131,7 +131,7 @@ void GestionStrategie::exportStrat()
     QFile saveFile("data/export.json");
     if(!saveFile.open(QIODevice::ReadWrite))
     {
-        qDebug()<<"Failed !";
+        qDebug()<<"Failed ! "<<Q_FUNC_INFO;
     }else
     {
         saveFile.flush();

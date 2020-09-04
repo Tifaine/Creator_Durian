@@ -24,7 +24,7 @@ Item {
     {
         target:gestDynamixel
 
-        onAjoutDyna:
+        function onAjoutDyna()
         {
             listDyna.append({index : listDyna.count,_color:"#00ffffff", value: 0, iddyna : id, speedDyna : 0})
         }

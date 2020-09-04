@@ -9,26 +9,26 @@ Item {
     Connections
     {
         target: gestRoboclaw
-        onInitDone:
+        function onInitDone()
         {
             textValueCodeurG.text = "0"
             textValueCodeurD.text = "0"
             textValueVG.text = "0"
             textValueVD.text = "0"
         }
-        onCodeurGaucheChanged:
+        function onCodeurGaucheChanged(value)
         {
             textValueCodeurG.text = value
         }
-        onCodeurDroitChanged:
+        function onCodeurDroitChanged(value)
         {
             textValueCodeurD.text = value
         }
-        onVitesseGaucheChanged:
+        function onVitesseGaucheChanged(value)
         {
             textValueVG.text = value
         }
-        onVitesseDroitChanged:
+        function onVitesseDroitChanged(value)
         {
             textValueVD.text = value
         }

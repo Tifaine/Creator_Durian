@@ -8,8 +8,10 @@ GestionDynamixel::GestionDynamixel(mqttClient *client, QObject *parent) :
     m_clientMqtt->sub_topic("listDyna");
     m_clientMqtt->sub_topic("robot2ordi/getValueDyna");
 
+#ifdef Q_OS_LINUX
     connect(m_clientMqtt, SIGNAL(listDyna(QString)), this, SLOT(listDynaMqtt(QString)));
     connect(m_clientMqtt, SIGNAL(valueDyna(QString)), this, SLOT(infoDynaMqtt(QString)));
+#endif
 }
 
 void GestionDynamixel::addDyna(Dyna * dyna)

@@ -24,11 +24,11 @@ Item {
     Connections
     {
         target:gestAction
-        onNouvelleAction:
+        function onNouvelleAction(name, isBlocante)
         {
             listAction.append({_nom:name, index:listAction.count, _color:"#00ffffff", isBlocante:isBlocante})
         }
-        onAddParam:
+        function onAddParam(name, defaultValue)
         {
 
             if(name === "Timeout")
@@ -57,7 +57,7 @@ Item {
                 updateParam(actionEnCours)
             }
         }
-        onAddAlias:
+        function onAddAlias(indiceParam, indiceAlias, name, value)
         {
             actionEnCours.addAlias(indiceParam)
             actionEnCours.setNomAlias(indiceParam, indiceAlias, name)
