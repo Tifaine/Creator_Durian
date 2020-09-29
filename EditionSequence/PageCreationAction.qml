@@ -259,7 +259,7 @@ Item {
 
     CheckBox {
         id: cbBlocante
-        width: 136
+        width: 175
         height: 40
         text: qsTr("Action blocante ?")
         visible: false
@@ -991,11 +991,7 @@ Item {
 
 /*##^##
 Designer {
-    D{i:14;anchors_x:30;anchors_y:115}D{i:15;anchors_x:140;anchors_y:116}D{i:17;anchors_height:200;anchors_width:200;anchors_x:508;anchors_y:300}
-D{i:19;anchors_y:108}D{i:18;anchors_x:329;anchors_y:108}D{i:20;anchors_y:108}D{i:21;anchors_height:100}
-D{i:31;anchors_x:507;anchors_y:164}D{i:27;anchors_x:507;anchors_y:164}D{i:26;anchors_x:65;anchors_y:164}
-D{i:34;anchors_x:967}D{i:35;anchors_width:150;anchors_x:1152}D{i:36;anchors_y:116}
-D{i:37;anchors_x:756;anchors_y:172}D{i:46;anchors_width:200;anchors_x:1090;anchors_y:529}
-D{i:47;anchors_x:761;anchors_y:253}D{i:48;anchors_x:1462;anchors_y:269}D{i:60;anchors_y:8}
+    D{i:14}D{i:15}D{i:17}D{i:19}D{i:18}D{i:20}D{i:21}D{i:31}D{i:27}D{i:26}D{i:34}D{i:35}
+D{i:36}D{i:37}D{i:46}D{i:47}D{i:48}D{i:60}
 }
 ##^##*/

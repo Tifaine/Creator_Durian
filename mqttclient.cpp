@@ -41,7 +41,7 @@ void mqttClient::updateMessage(const QMqttMessage &msg)
     if(msg.topic().name() == "listDyna")
     {
         emit listDyna( msg.payload());
-    }else if(msg.topic().name() == "ordi2robot/getValueDyna")
+    }else if(msg.topic().name() == "robot2ordi/getValueDyna")
     {
         emit valueDyna( msg.payload());
     }

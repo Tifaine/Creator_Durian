@@ -55,11 +55,13 @@ void GestionDynamixel::setValue(Dyna * dyna)
 void GestionDynamixel::infoDynaMqtt(QString infoDyna)
 {
     qDebug()<<infoDyna;
+    qDebug()<<"woop";
     QStringList list = infoDyna.split(',');
-    for(int i = 0; i < list.size(); i++)
+    for(int i = 0; i < listDyna.size(); i++)
     {
         if(listDyna.at(i)->getId() == list.at(0).toInt())
         {
+            qDebug()<<"La";
             listDyna.at(i)->setValue( list.at(1).toInt() );
             listDyna.at(i)->setVitesse( list.at(2).toInt() );
         }

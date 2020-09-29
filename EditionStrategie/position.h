@@ -3,6 +3,9 @@
 
 #include <QQuickItem>
 #include <QList>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 class Etape;
 

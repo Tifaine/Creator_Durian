@@ -22,6 +22,7 @@ Etape* GestionEtape::getEtape(int indice)
 
 QString GestionEtape::getNomEtape(int indice)
 {
+    qDebug()<<indice<<" "<<getNbEtape();
     return getEtape(indice)->getNomEtape();
 }
 

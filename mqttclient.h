@@ -3,10 +3,11 @@
 
 #include <QObject>
 #include <QList>
-//#include <QtMqtt/QMqttClient>
-//#include <QtMqtt/QMqttMessage>
-//#include <QtMqtt/QMqttSubscription>
-
+#ifdef Q_OS_LINUX
+#include <QtMqtt/QMqttClient>
+#include <QtMqtt/QMqttMessage>
+#include <QtMqtt/QMqttSubscription>
+#endif
 class mqttClient : public QObject
 {
     Q_OBJECT

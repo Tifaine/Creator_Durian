@@ -206,7 +206,6 @@ Item {
                     model:listAction
                     anchors.fill: parent
 
-
                     BlocAction
                     {
                         id:act

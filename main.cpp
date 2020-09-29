@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
 {
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
+    app.setOrganizationName("RCO");
+    app.setOrganizationDomain("RCO");
     initRep();
     GestionRoboclaw roboclaw;
     GestionEtape gestEtape;

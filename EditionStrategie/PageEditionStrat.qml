@@ -13,22 +13,73 @@ Item {
     property bool isPositionModeOn : false
     property bool isDragEnabled : true
 
+    onIsStepShowedChanged:
+    {
+        updateAllLiaison()
+    }
+    onIsPositionShowedChanged:
+    {
+        updateAllLiaison()
+    }
+
     Component.onCompleted:
     {
         listRepeaterEtape.clear()
         listRepeaterPosition.clear()
+        gestStrat.clearList()
+    }
 
+    function updateAllLiaison()
+    {
+        for(var i = 0; i < repeaterPosition.count; i++)
+        {
+            repeaterPosition.itemAt(i).editLiaison()
+        }
+    }
 
+    Connections
+    {
+        target: gestStrat
+        function onClearAllLists()
+        {
+            listRepeaterEtape.clear()
+            listRepeaterPosition.clear()
+            gestStrat.clearList()
+        }
+
+        function onNouvelleEtape(nom, nbPoints, tempsMoyen, tempsMax, dateMax,
+                                 deadLine, x, y, color, nameSequence)
+        {
+            addEtape(x, y, color, nom, dateMax, deadLine, nbPoints, nameSequence, tempsMax, tempsMoyen)
+        }
+
+        function onNouveauTaux(indice, param, cond, value, ratio)
+        {
+            repeaterEtape.itemAt(indice).addTaux(param, cond, value, ratio)
+        }
+
+        function onNouvellePosition(x, y)
+        {
+            console.log("tamere",x,y)
+            addPosition(x, y)
+        }
+        function onUpdateAllLiaison()
+        {
+            updateAllLiaison()
+        }
     }
 
     function addEtape(x, y, colorEtape, nom, dateMax, deadline,
                       nbPoints, sequenceName, tempsMax, tempsMoyen)
     {
+
         listRepeaterEtape.append({"_x" : x, "_y" : y, index : listRepeaterEtape.count,
                                      "_color" : colorEtape, "_nom" : nom,
                                      "_dateMax" : dateMax, "_deadLine" : deadline,
                                      "_nbPoints" : nbPoints,"_sequenceName" : sequenceName,
                                      "_tempsMax" : tempsMax, "_tempsMoyen" : tempsMoyen})
+
+        gestStrat.addEtape(repeaterEtape.itemAt(repeaterEtape.count -1 ).children[0])
 
     }
 
@@ -72,6 +123,15 @@ Item {
                 }
             }
 
+            function addTaux(param, cond, value, ratio)
+            {
+                etape.addItemTaux()
+                etape.setParamTaux(step.getNbTaux()-1, param)
+                etape.setCondTaux(step.getNbTaux()-1, cond)
+                etape.setValueTaux(step.getNbTaux()-1, value)
+                etape.setRatioTaux(step.getNbTaux()-1, ratio)
+            }
+
             Etape
             {
                 id:etape
@@ -85,6 +145,7 @@ Item {
                 nameSequence: _sequenceName
                 tempsMax: _tempsMax
                 tempsMoyen: _tempsMoyen
+
             }
 
             MouseArea
@@ -112,7 +173,6 @@ Item {
                 {
 
                 }
-
             }
         }
     }
@@ -121,6 +181,8 @@ Item {
     {
         listRepeaterPosition.append({"_x" : x, "_y" : y, "_index" : listRepeaterPosition.count})
         listRepeaterCanvas.append({ "_index" : listRepeaterCanvas.count })
+
+        gestStrat.addPosition(repeaterPosition.itemAt(repeaterPosition.count -1 ).children[0])
     }
 
     ListModel
@@ -200,9 +262,13 @@ Item {
                             position.getPosition(i).mustUpdateLiaison()
                         }
                     }
-                    for(var j = 0; j < position.getNbEtapeLiee(); j++)
+
+                    if(isStepShowed)
                     {
-                        drawAxis(position.index, position.x + 7, position.y + 7, position.getEtape(j).x + 7, position.getEtape(j).y + 7, "red")
+                        for(var j = 0; j < position.getNbEtapeLiee(); j++)
+                        {
+                            drawAxis(position.index, position.x + 7, position.y + 7, position.getEtape(j).x + 7, position.getEtape(j).y + 7, "red")
+                        }
                     }
                 }
             }

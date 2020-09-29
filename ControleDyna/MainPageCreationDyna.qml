@@ -24,7 +24,7 @@ Item {
     {
         target:gestDynamixel
 
-        function onAjoutDyna()
+        function onAjoutDyna(id)
         {
             listDyna.append({index : listDyna.count,_color:"#00ffffff", value: 0, iddyna : id, speedDyna : 0})
         }
@@ -143,8 +143,8 @@ Item {
                                 dynaSelected = dyna
                                 textFieldID.text = dyna.mid
                                 textFieldNom.text = dyna.nom
-                                /*textFieldSpeed.text = dyna.vitesse
-                                textFieldValue.text = dyna.mValue*/
+                                textFieldSpeed.text = dyna.vitesse
+                                textFieldValue.text = dyna.mValue
                             }
                         }
 

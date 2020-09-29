@@ -10,7 +10,8 @@ Item {
     width: 1500
     height: 800
 
-    property int etapeEnCours: -1
+    property var etapeEnCours: 0
+    property int indiceEtape: -1
 
     Connections
     {
@@ -24,9 +25,8 @@ Item {
     ListModel
     {
         id:listComportement
-        ListElement{ _nom:"Deplacement" ; index : 0; _color:"#00ffffff"}
-        ListElement{ _nom:"test" ; index : 1; _color:"#00ffffff"}
-        ListElement{ _nom:"aaa" ; index : 2; _color:"#00ffffff"}
+        ListElement{ _nom:"Canasson" ; stepIndex : 0; _color:"#000000ff"; colorEtape: "blue"; _dateMax:50;
+            _deadLine : 12; _nbPoints : 45; _sequenceName: "test"; _tempsMax : 10; _tempsMoyen : 20}
     }
 
     Component.onCompleted:
@@ -39,7 +39,11 @@ Item {
         listComportement.clear();
         for(var i = 0; i < gestEtape.getNbEtape(); i++)
         {
-            listComportement.append({"_nom" : gestEtape.getEtape(i).nomEtape, "index" : listComportement.count, "_color" : "#00ffffff"})
+            listComportement.append({"_nom" : gestEtape.getEtape(i).nomEtape, "stepIndex" : listComportement.count,
+                                        "_color" : "#000000ff", "colorEtape" : gestEtape.getEtape(i).color,
+                                        "_dateMax" : gestEtape.getEtape(i).dateMax, "_deadLine" : gestEtape.getEtape(i).deadline,
+                                        "_nbPoints" : gestEtape.getEtape(i).nbPoints, "_sequenceName": gestEtape.getEtape(i).nameSequence,
+                                        "_tempsMax" : gestEtape.getEtape(i).tempsMax, "_tempsMoyen": gestEtape.getEtape(i).tempsMoyen})
         }
     }
 
@@ -93,19 +97,19 @@ Item {
                 {
                     id:rect
                     height:40
-                    width:90
+                    width:120
                     color:_color
                     radius: 10
                     border.color: "#ffffff"
                     border.width: 1
                     anchors.left: repeaterListAction.left
-                    anchors.leftMargin: (index%2)==1?(index==1?0:(Math.floor(index/2))*100)+5:((index/2)*100)+5
+                    anchors.leftMargin: (stepIndex%2)==1?(stepIndex==1?0:(Math.floor(stepIndex/2))*130)+5:((stepIndex/2)*130)+5
                     anchors.top: repeaterListAction.top
-                    anchors.topMargin:(index%2)==1?50:5
+                    anchors.topMargin:(stepIndex%2)==1?50:5
 
 
                     Rectangle
-                    {
+                    {                        
                         color: _color//"#0cfdfdfd"
                         radius: 10
                         anchors.right: parent.right
@@ -126,6 +130,19 @@ Item {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         }
 
+                        Etape
+                        {
+                            id:papaStep
+                            color:colorEtape
+                            nomEtape: _nom
+                            dateMax:  _dateMax
+                            deadline: _deadLine
+                            nbPoints: _nbPoints
+                            nameSequence: _sequenceName
+                            tempsMax: _tempsMax
+                            tempsMoyen: _tempsMoyen
+                        }
+
                         MouseArea
                         {
                             anchors.fill: parent
@@ -133,26 +150,29 @@ Item {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                             onClicked:
                             {
-                                console.log(gestEtape.getNomEtape(index))
-                                rectangle5.updateColor(index)
-                                etapeEnCours = -1
-                                textFieldNomEtape.text = gestEtape.getNomEtape(index)
-                                textFieldNbPoints.text = gestEtape.getNbPointEtape(index)
-                                textFieldTpsMoyen.text = gestEtape.getTempsMoyenEtape(index)
-                                textFieldTpsMax.text = gestEtape.getTempsMaxEtape(index)
-                                textFieldDateMax.text = gestEtape.getDateMaxEtape(index)
-                                textFieldDeadline.text = gestEtape.getNomEtape(index)
-                                rectangleColor.color = gestEtape.getColorEtape(index)
+                                console.log(stepIndex)
+                                console.log(gestEtape.getNomEtape(stepIndex))
+                                rectangle5.updateColor(stepIndex)
+                                etapeEnCours = 0
+                                indiceEtape = -1
+                                textFieldNomEtape.text = papaStep.nomEtape
+                                textFieldNbPoints.text = papaStep.nbPoints
+                                textFieldTpsMoyen.text = papaStep.tempsMoyen
+                                textFieldTpsMax.text = papaStep.tempsMax
+                                textFieldDateMax.text = papaStep.dateMax
+                                textFieldDeadline.text = papaStep.deadline
+                                rectangleColor.color = papaStep.color
                                 controlSequence.currentIndex = 0;
                                 for(var i = 0; i < folderModel.count; i++)
                                 {
-                                    if(folderModel.get(i, "fileName") === gestEtape.getNomSequenceEtape(index))
+                                    if(folderModel.get(i, "fileName") === papaStep.nameSequence)
                                     {
                                         controlSequence.currentIndex = i;
                                         break;
                                     }
                                 }
-                                etapeEnCours = index
+                                etapeEnCours = papaStep
+                                indiceEtape = stepIndex
                             }
                         }
                     }
@@ -204,9 +224,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).nomEtape = text
+                gestEtape.getEtape(indiceEtape).nomEtape = text
             }
         }
     }
@@ -245,9 +265,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).nbPoints = parseInt(text)
+                gestEtape.getEtape(indiceEtape).nbPoints = parseInt(text)
             }
         }
     }
@@ -255,7 +275,7 @@ Item {
     Button {
         id: buttonAddEtape
         x: 1457
-        width: 90
+        width: 150
         height: 90
         text: qsTr("Ajouter étape")
         anchors.right: parent.right
@@ -265,7 +285,11 @@ Item {
         onClicked:
         {
             gestEtape.createNewEtape()
-            listComportement.append({"_nom" : "NewEtape", "index" : listComportement.count, "_color" : "#00ffffff"})
+            listComportement.append({"_nom" : "NewEtape", "stepIndex" : listComportement.count,
+                                        "_color" : "#000000ff", "colorEtape" : "#0000ff",
+                                        "_dateMax" : 0, "_deadLine" :0,
+                                        "_nbPoints" : 0, "_sequenceName": "",
+                                        "_tempsMax" : 0, "_tempsMoyen": 0})
         }
     }
 
@@ -314,9 +338,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).tempsMoyen = parseInt(text)
+                gestEtape.getEtape(indiceEtape).tempsMoyen = parseInt(text)
             }
         }
     }
@@ -366,9 +390,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).tempsMax = parseInt(text)
+                gestEtape.getEtape(indiceEtape).tempsMax = parseInt(text)
             }
         }
     }
@@ -418,9 +442,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).dateMax = parseInt(text)
+                gestEtape.getEtape(indiceEtape).dateMax = parseInt(text)
             }
         }
     }
@@ -470,9 +494,9 @@ Item {
         }
         onTextChanged:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).deadline = parseInt(text)
+                gestEtape.getEtape(indiceEtape).deadline = parseInt(text)
             }
         }
     }
@@ -490,9 +514,9 @@ Item {
         anchors.topMargin: 65
         onClicked:
         {
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).save()
+                gestEtape.getEtape(indiceEtape).save()
                 gestEtape.updateEtape()
             }
         }
@@ -532,9 +556,9 @@ Item {
         onAccepted: {
             console.log("You chose: " + colorDialog.color)
             rectangleColor.color = colorDialog.color
-            if(etapeEnCours !== -1 )
+            if(etapeEnCours !== 0 )
             {
-                gestEtape.getEtape(etapeEnCours).color = colorDialog.color
+                gestEtape.getEtape(indiceEtape).color = colorDialog.color
             }
         }
         onRejected: {
@@ -566,9 +590,9 @@ Item {
         currentIndex: 0
         onCurrentIndexChanged:
         {
-            if(etapeEnCours !== -1)
+            if(etapeEnCours !== 0)
             {
-                gestEtape.getEtape(etapeEnCours).nameSequence = folderModel.get(currentIndex, "fileName")
+                gestEtape.getEtape(indiceEtape).nameSequence = folderModel.get(currentIndex, "fileName")
             }
         }
 

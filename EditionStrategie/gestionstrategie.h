@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QDir>
 #include "etape.h"
+#include "position.h"
 
 #include "../EditionSequence/editableaction.h"
 
@@ -17,6 +18,7 @@ public:
 
 public slots:
     void addEtape(Etape *);
+    void addPosition(Position *);
     void removeEtape(Etape * etape);
     Etape* getEtape(int);
     Etape* getEtape(Etape *);
@@ -31,11 +33,17 @@ public slots:
 
 
 signals:
-    void nouvelleEtape(QString nom, int nbPoints, int tempsMoyen, int tempsMax, int dateMax, int deadLine, int x, int y, QString color, QString nameSequence);
+    void nouvelleEtape(QString nom, int nbPoints, int tempsMoyen, int tempsMax, int dateMax,
+                       int deadLine, int x, int y, QString color, QString nameSequence);
     void nouveauTaux(int indice, int param, int cond, int value, int ratio);
+
+    void nouvellePosition(int x, int y);
+    void updateAllLiaison();
+    void clearAllLists();
 
 private:
     QList <Etape *> listEtape;
+    QList <Position *> listPosition;
     QList <QString> listStrat;
     QList <EditableAction *> listAction;
     int appendSequence(QString filename, int indiceSequence);
